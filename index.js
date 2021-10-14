@@ -23,10 +23,7 @@ const generateAcessToken = (req, res, next) => {
     if (!uuid || uuid == '') {
         uuid = 0;
     }
-    let role = RtcRole.SUBSCRIBER;
-    if (req.query.role == 'publisher') {
-        role = RtcRole.PUBLISHER;
-    }
+
     let expireTime = req.query.expireTime;
 
     if (!expireTime || expireTime == '') {
@@ -37,14 +34,7 @@ const generateAcessToken = (req, res, next) => {
 
     const currentTime = Math.floor(Date.now() / 1000);
     const privilegeExpireTime = currentTime + expireTime;
-    const token = RtcTokenBuilder.buildTokenWithUid(
-        APP_ID,
-        APP_CERTIFICATE,
-        channelName,
-        uuid,
-        role,
-        privilegeExpireTime
-    );
+    const token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uuid, privilegeExpireTime);
     return res.json({ token: token });
 };
 
