@@ -1,45 +1,67 @@
 const express = require('express');
-const { RtcTokenBuilder, RtcRole } = require('agora-access-token');
+const bodyParser = require('body-parser');
+const ejs = require('ejs');
+const mongoose = require('mongoose');
 
+const Routes = require('./routes');
 const PORT = process.env.PORT || 8080;
-const APP_ID = '87b166c29c46485590dba9d768f2c47f';
-const APP_CERTIFICATE = 'cf2f0ae1418d4a02a51bcf5fd18a7f40';
+
 const app = express();
-const nocache = (req, res, next) => {
-    res.header('Cache-Control', 'private,no-cache,no-store,must-revalidate');
-    res.header('Expires', '-1');
-    res.header('Pragma', 'no-cache');
-    next();
-};
+app.set('view engine', 'ejs');
 
-const generateAcessToken = (req, res, next) => {
-    res.header('Acess-Control-Allow-Origin', '*');
-    const channelName = req.query.channelName;
+app.use(bodyParser.json());
 
-    if (!channelName) {
-        return res.status(500).json({ error: 'channel is required' });
-    }
-    let uuid = req.query.uuid;
-    if (!uuid || uuid == '') {
-        uuid = 0;
-    }
+app.use(
+	bodyParser.urlencoded({
+		extended: true
+	})
+);
 
-    let expireTime = req.query.expireTime;
+app.use(express.static('public'));
 
-    if (!expireTime || expireTime == '') {
-        expireTime = 3600 * 24;
-    } else {
-        expireTime = parseInt(expireTime, 10);
-    }
+const connectString =
+	'mongodb+srv://rajeev:qwerasdf@cluster0.syoov.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 
-    const currentTime = Math.floor(Date.now() / 1000);
-    const privilegeExpireTime = currentTime + expireTime;
-    const token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uuid, privilegeExpireTime);
-    return res.json({ token: token });
-};
+mongoose
+	.connect(connectString, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true
+	})
+	.then((con) => {
+		//console.log(con.connections);
+		console.log('DB connection successful');
+	})
+	.catch((err) => console.log('database connection error', err));
 
-app.get('/access_token', nocache, generateAcessToken);
+app.use(Routes);
+
+app.all('*', (req, res, next) => {
+	console.log('req', req.originalUrl);
+
+	const err = new Error('cant find this route');
+	err.status = 'fail';
+	err.statusCode = 410;
+	next(err);
+	//res.status(404);
+	// res.send({
+	// 	status: 'fail',
+	// 	message: `Can't find ${req.originalUrl} on this server`
+	// });
+});
+
+app.use((err, req, res, next) => {
+	err.status = err.status || 'error';
+	err.statusCode = err.statusCode || 500;
+
+	res.status(err.statusCode);
+	console.log(err);
+
+	res.send({
+		status: 'fail',
+		err: err.message
+	});
+});
 
 app.listen(PORT, () => {
-    console.log('listening on port = ', PORT);
+	console.log('listening on port = ', PORT);
 });
