@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const LiveRoom = require('./liveroomschema');
-const ScheduledRoom = require('./Scheduledroomschema');
+const LiveRoom = require('./liveroomschema.js');
+const ScheduledRoom = require('./Scheduledroomschema.js');
 
 const catchAsync = (fn) => {
 	return (req, res, next) => {
