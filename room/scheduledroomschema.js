@@ -7,7 +7,7 @@ const ScheduledRoomSchema = new mongoose.Schema({
 	},
 
 	category: String,
-	decription: Number,
+	decription: String,
 	speakerCount: Number,
 	listenerCount: Number,
 	hostName: String,
