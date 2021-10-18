@@ -7,6 +7,8 @@ const roomController = require('./room/roomcontroller');
 // token routes
 
 router.route('/access_token').get(tokenController.nocache, tokenController.generateAcessToken);
-router.route('/create_room').post(roomController.createRoom).get(roomController.getAllRoom);
+router.route('/create_room').post(roomController.createRoom);
+router.route('/liveroom').get(roomController.getLiveRoom);
+router.route('/scheduledroom').get(roomController.getScheduledRoom);
 
 module.exports = router;

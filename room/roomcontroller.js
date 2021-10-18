@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const Room = require('./roomschema');
+const LiveRoom = require('./liveroomschema');
+const ScheduledRoom = require('./Scheduledroomschema');
 
 const catchAsync = (fn) => {
 	return (req, res, next) => {
@@ -9,13 +10,30 @@ const catchAsync = (fn) => {
 };
 
 exports.createRoom = catchAsync(async (req, res, next) => {
-	const newRoom = await Room.create(req.body);
-	res.send({
-		status: 'sucess',
-		data: {
-			room: newRoom
-		}
-	});
+	console.log('date time', req.body.scheduledTime);
+	let time = req.body.scheduledTime;
+	time = String(time);
+	time = time.split(' ')[1].substring(0, 5);
+	req.body.scheduledTime = time;
+	console.log(' time', req.body.scheduledTime);
+
+	if (req.body.scheduled == true) {
+		const newRoom = await ScheduledRoom.create(req.body);
+		res.send({
+			status: 'sucess',
+			data: {
+				room: newRoom
+			}
+		});
+	} else {
+		const newRoom = await LiveRoom.create(req.body);
+		res.send({
+			status: 'sucess',
+			data: {
+				room: newRoom
+			}
+		});
+	}
 
 	// res.status(201).jason({
 	// 	status: 'success',
@@ -25,8 +43,20 @@ exports.createRoom = catchAsync(async (req, res, next) => {
 	// });
 });
 
-exports.getAllRoom = catchAsync(async (req, res, next) => {
-	const rooms = await Room.find();
+exports.getLiveRoom = catchAsync(async (req, res, next) => {
+	const rooms = await LiveRoom.find();
+	res.send({
+		status: 'sucess',
+		length: rooms.length,
+		data: {
+			rooms
+		}
+	});
+	res.status(200);
+});
+
+exports.getScheduledRoom = catchAsync(async (req, res, next) => {
+	const rooms = await ScheduledRoom.find();
 	res.send({
 		status: 'sucess',
 		length: rooms.length,

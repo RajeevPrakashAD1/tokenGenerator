@@ -4,6 +4,7 @@ const ejs = require('ejs');
 const mongoose = require('mongoose');
 
 const Routes = require('./routes');
+const checkScheduledMeetings = require('./checkingscheduled.js');
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -61,6 +62,8 @@ app.use((err, req, res, next) => {
 		err: err.message
 	});
 });
+
+setInterval(checkScheduledMeetings, 1000 * 60);
 
 app.listen(PORT, () => {
 	console.log('listening on port = ', PORT);

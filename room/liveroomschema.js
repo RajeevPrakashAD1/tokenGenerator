@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const RoomSchema = new mongoose.Schema({
+const LiveRoomSchema = new mongoose.Schema({
 	topic: {
 		type: String,
 		required: true
@@ -12,13 +12,17 @@ const RoomSchema = new mongoose.Schema({
 	listenerCount: Number,
 	hostName: String,
 	scheduled: Boolean,
-	scheduleTime: String,
-	roomId: Number
+	scheduledTime: String,
+	roomId: {
+		type: Number,
+		required: true,
+		unique: true
+	}
 });
 
-const Room = mongoose.model('Room', RoomSchema);
+const LiveRoom = mongoose.model('LiveRoom', LiveRoomSchema);
 
-module.exports = Room;
+module.exports = LiveRoom;
 
 // topic:room1,
 // category:dkfkd,
