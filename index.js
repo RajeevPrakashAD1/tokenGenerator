@@ -62,7 +62,7 @@ app.use((err, req, res, next) => {
 	});
 });
 
-setInterval(checkScheduledMeetings, 1000 * 60);
+setInterval(checkScheduledMeetings, 1000*10);
 
 app.listen(PORT, () => {
 	console.log('listening on port = ', PORT);

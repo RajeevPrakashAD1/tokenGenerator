@@ -12,12 +12,7 @@ const ScheduledRoomSchema = new mongoose.Schema({
 	listenerCount: Number,
 	hostName: String,
 	scheduled: Boolean,
-	scheduledTime: String,
-	roomId: {
-		type: Number,
-		required: true,
-		unique: true
-	}
+	scheduledTime: String
 });
 
 const ScheduledRoom = mongoose.model('ScheduledRoom', ScheduledRoomSchema);

@@ -13,11 +13,7 @@ const LiveRoomSchema = new mongoose.Schema({
 	hostName: String,
 	scheduled: Boolean,
 	scheduledTime: String,
-	roomId: {
-		type: Number,
-		required: true,
-		unique: true
-	}
+	
 });
 
 const LiveRoom = mongoose.model('LiveRoom', LiveRoomSchema);

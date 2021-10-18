@@ -8,8 +8,15 @@ const checkScheduledMeetings = async (req, res, next) => {
 
 	let cd = new Date();
 	console.log(cd, '=cd');
-	let hr = cd.getHours();
-	let min = cd.getMinutes();
+	let hr = cd.getHours() + 5;
+	let min = cd.getMinutes() + 30;
+
+	if (hr > 24) hr = hr - 24;
+	if (min > 60) {
+		hr += 1;
+		min = min - 60;
+	}
+
 	hr = hr.toString();
 	min = min.toString();
 	if (hr.length < 2) hr = '0' + hr;
@@ -26,7 +33,7 @@ const checkScheduledMeetings = async (req, res, next) => {
 		j.scheduled = true;
 		LiveRoom.insertMany([ j ])
 			.then(
-				ScheduledRoom.deleteOne({ roomId: j.roomId })
+				ScheduledRoom.deleteOne({ _id: j._id })
 					.then(console.log('delted from schedule and inserted successfully'))
 					.catch((err) => {
 						console.log('delete err', err);
