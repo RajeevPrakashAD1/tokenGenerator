@@ -20,8 +20,7 @@ app.use(
 
 app.use(express.static('public'));
 
-const connectString =
-	'mongodb+srv://rajeev:qwerasdf@cluster0.syoov.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+const connectString = 'mongodb+srv://rajeev:qwerasdf@cluster0.syoov.mongodb.net/RoomDB?retryWrites=true&w=majority';
 
 mongoose
 	.connect(connectString, {
