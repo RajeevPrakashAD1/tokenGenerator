@@ -1,19 +1,27 @@
 const mongoose = require('mongoose');
 
 const LiveRoomSchema = new mongoose.Schema({
-	topic: {
+	channelName: {
 		type: String,
 		required: true
 	},
 
-	category: String,
-	decription: String,
+	category: { type: String, required: true },
+	groupId: { type: String, required: true },
+	userId: { type: String, required: true },
+	groupName: { type: String, required: true },
+	description: String,
 	speakerCount: Number,
 	listenerCount: Number,
 	hostName: String,
 	scheduled: Boolean,
-	scheduledTime: String,
-	
+	scheduledTime: { type: String, required: true },
+	type: String,
+	state: String,
+	district: String,
+	block: String,
+	panchayat: String,
+	village: String
 });
 
 const LiveRoom = mongoose.model('LiveRoom', LiveRoomSchema);

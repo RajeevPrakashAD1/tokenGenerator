@@ -30,7 +30,7 @@ const checkScheduledMeetings = async (req, res, next) => {
 		// delete no['_id'];
 		// delete no['__v'];
 		// console.log(' no = ', no);
-		j.scheduled = true;
+		j.scheduled = false;
 		LiveRoom.insertMany([ j ])
 			.then(
 				ScheduledRoom.deleteOne({ _id: j._id })
