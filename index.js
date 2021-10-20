@@ -2,10 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
-
+const server = require('./socket/socketServer');
 const Routes = require('./routes');
 const checkScheduledMeetings = require('./checkingscheduled.js');
 const PORT = process.env.PORT || 8080;
+const PORT2 = process.env.PORT || 8000;
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -62,7 +63,11 @@ app.use((err, req, res, next) => {
 	});
 });
 
-setInterval(checkScheduledMeetings, 1000*60);
+setInterval(checkScheduledMeetings, 1000 * 60);
+
+// server.listen(PORT2, () => {
+// 	console.log('listening on *:', PORT2);
+// });
 
 app.listen(PORT, () => {
 	console.log('listening on port = ', PORT);

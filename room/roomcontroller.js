@@ -15,9 +15,15 @@ exports.createRoom = catchAsync(async (req, res, next) => {
 	time = String(time);
 	time = time.split(' ')[1].substring(0, 5);
 	req.body.scheduledTime = time;
-	console.log(' time', req.body.scheduledTime);
 
-	if (req.body.scheduled == true) {
+	// let date = new Date(req.body.scheduledTime);
+	// console.log('date: ' + date);
+	// date = date.toISOString();
+	let date = new Date('2021-10-18 10:59:12.322').toISOString();
+	req.body.scheduledTimeWithFormat = date;
+	console.log(req.body, 'bsy requested');
+
+	if (req.body.scheduled == 'true') {
 		const newRoom = await ScheduledRoom.create(req.body);
 		res.send({
 			status: 'sucess',
