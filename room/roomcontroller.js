@@ -11,22 +11,26 @@ const catchAsync = (fn) => {
 
 exports.createRoom = catchAsync(async (req, res, next) => {
 	console.log('date time', req.body.scheduledTime);
-	let time = req.body.scheduledTime;
-	time = String(time);
-	time = time.split(' ')[1].substring(0, 5);
-	req.body.scheduledTime = time;
+	if (req.body.scheduledTime && req.body.scheduledTime != '') {
+		let time = req.body.scheduledTime;
+		req.body.scheduledTimeWithFormat = req.body.scheduledTime;
+		time = String(time);
+		time = time.split(' ')[1].substring(0, 5);
+		req.body.scheduledTime = time;
 
-	// let date = new Date(req.body.scheduledTime);
-	// console.log('date: ' + date);
-	// date = date.toISOString();
-	let date = new Date('2021-10-18 10:59:12.322').toISOString();
-	req.body.scheduledTimeWithFormat = date;
-	console.log(req.body, 'bsy requested');
+		// let date = new Date(req.body.scheduledTime);
+		// console.log('date: ' + date);
+		// date = date.toISOString();
+		// let datestring = req.body.scheduledTime;
+		// let date = new Date(datestring).toISOString();
+
+		// console.log(req.body, 'bsy requested');
+	}
 
 	if (req.body.scheduled == 'true') {
 		const newRoom = await ScheduledRoom.create(req.body);
 		res.send({
-			status: 'sucess',
+			status: 'sucessfully added in scheduled room',
 			data: {
 				room: newRoom
 			}
@@ -34,7 +38,7 @@ exports.createRoom = catchAsync(async (req, res, next) => {
 	} else {
 		const newRoom = await LiveRoom.create(req.body);
 		res.send({
-			status: 'sucess',
+			status: 'sucess in live room',
 			data: {
 				room: newRoom
 			}

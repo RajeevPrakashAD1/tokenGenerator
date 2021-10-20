@@ -14,7 +14,7 @@ const ScheduledRoomSchema = new mongoose.Schema({
 	speakerCount: Number,
 	listenerCount: Number,
 	hostName: String,
-	scheduled: String,
+	scheduled: { type: String, required: true },
 	scheduledTime: { type: String, required: true },
 	scheduledTimeWithFormat: String,
 	type: String,
