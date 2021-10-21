@@ -29,20 +29,17 @@ exports.createRoom = catchAsync(async (req, res, next) => {
 
 	if (req.body.scheduled == 'true') {
 		const newRoom = await ScheduledRoom.create(req.body);
-		res.send({
-			status: 'sucessfully added in scheduled room',
-			data: {
-				room: newRoom
-			}
-		});
+		res.send({ _id: newRoom._id });
 	} else {
 		const newRoom = await LiveRoom.create(req.body);
-		res.send({
-			status: 'sucess in live room',
-			data: {
-				room: newRoom
-			}
-		});
+		res.send({ _id: newRoom._id });
+
+		// res.send({
+		// 	status: 'sucess in live room',
+		// 	data: {
+		// 		room: newRoom
+		// 	}
+		// });
 	}
 
 	// res.status(201).jason({
