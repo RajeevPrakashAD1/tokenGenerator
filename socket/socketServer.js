@@ -3,7 +3,17 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 
-const io = require('socket.io')(server, { origins: [ 'http://localhost:3000', 'http://localhost:30001' ] });
+var options = {
+	allowUpgrades: true,
+	transports: [ 'polling', 'websocket' ],
+	pingTimeout: 9000,
+	pingInterval: 3000,
+	cookie: 'mycookie',
+	httpCompression: true,
+	origins: '*:*'
+};
+
+const io = require('socket.io')(server, options);
 
 // const io = require('socket.io')(8000);
 let rooms = {};
@@ -19,6 +29,7 @@ io.on('connection', (socket) => {
 		userInfo[socket.id] = object.roomId;
 
 		socket.join(object.roomId);
+		socket.to(object.roomId).emit('new_user', object);
 	});
 
 	socket.on('join_room', (object) => {
@@ -34,6 +45,7 @@ io.on('connection', (socket) => {
 		}
 		userInfo[socket.id] = object.roomId;
 		socket.join(object.roomId);
+		socket.to(object.roomId).emit('new_user', object);
 	});
 
 	socket.on('get_connected_users', (roomId) => {
