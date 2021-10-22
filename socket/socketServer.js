@@ -42,6 +42,10 @@ io.on('connection', (socket) => {
 		socket.emit('list_connected_users', clientsList);
 	});
 
+	socket.on('delete_room', (roomId) => {
+		delete rooms[roomId];
+	});
+
 	socket.on('disconnect', () => {
 		let rid = userInfo[socket.id];
 		if (rooms[rid]) rooms[rid] = rooms[rid].filter((item) => item.socket_id !== socket.id);
@@ -51,11 +55,11 @@ io.on('connection', (socket) => {
 	});
 });
 
-setInterval(() => {
-	console.log('rooms= ', rooms);
-	console.log('userInfo= ', userInfo);
-	console.log('.............................');
-}, 10 * 1000);
+// setInterval(() => {
+// 	console.log('rooms= ', rooms);
+// 	console.log('userInfo= ', userInfo);
+// 	console.log('.............................');
+// }, 10 * 1000);
 // module.exports = server;
 
 server.listen(8000, () => {

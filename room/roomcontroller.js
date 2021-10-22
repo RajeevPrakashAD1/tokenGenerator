@@ -73,3 +73,39 @@ exports.getScheduledRoom = catchAsync(async (req, res, next) => {
 	});
 	res.status(200);
 });
+
+// exports.getFilteredRoom = catchAsync(async (req, res, next) => {
+//     let country = req.query.country;
+//     let state = req.query.state;
+//     let district = req.query.district;
+    
+//     const rooms = await LiveRoom.find({})
+//                         .where('country').equals(country)
+//                         .where('state').equals(state)
+//                         .where('district').equals(district).exec(function(err,data){
+//                             if(err){console.log(err);}
+//                         else{res.send(rooms);res.status(200)}
+                    
+//                 };
+        // subcategories
+        //         .find({})//grabs all subcategoris
+        //         .where('categoryId').ne([])//filter out the ones that don't have a category
+        //         .populate('categoryId')
+        //         .where('active').equals(true)
+        //         .where('display').equals(true)
+        //         .where('categoryId.active').equals(true)
+        //         .where('display').in('categoryId').equals(true)
+        //         .exec(function (err, data) {
+        //         if (err) {
+        //             console.log(err);
+        //             console.log('error returned');
+        //             res.send(500, { error: 'Failed insert' });
+        //         }
+    
+        //         if (!data) {
+        //             res.send(403, { error: 'Authentication Failed' });
+        //         }
+    
+        //         res.send(200, data);
+        //         console.log('success generate List');
+        //     });
