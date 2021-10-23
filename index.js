@@ -7,11 +7,14 @@ const Routes = require('./routes');
 const checkScheduledMeetings = require('./checkingscheduled.js');
 const PORT = process.env.PORT || 8080;
 const PORT2 = process.env.PORT || 8000;
+var cors = require('cors');
 
 const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
+
+app.use(cors());
 
 app.use(
 	bodyParser.urlencoded({

@@ -5,7 +5,7 @@ const LiveRoomSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-
+    topic:String,
 	category: { type: String, required: true },
 	groupId: { type: String, required: true },
 	userId: { type: String, required: true },

@@ -8,6 +8,7 @@ const ScheduledRoomSchema = new mongoose.Schema({
 
 	category: { type: String, required: true },
 	groupId: { type: String, required: true },
+    topic:String,
 	userId: { type: String, required: true },
 	groupName: { type: String, required: true },
 	description: String,
