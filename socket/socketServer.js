@@ -26,6 +26,7 @@ io.on('connection', (socket) => {
 		hostofroom[roomId] = socket.id;
 		socket.join(object.roomId);
 		socket.to(object.roomId).emit('new_user', object);
+		socket.to(socket.id).emit('already_in_room', rooms[roomId]);
 	});
 
 	socket.on('join_room', (object) => {
@@ -45,6 +46,7 @@ io.on('connection', (socket) => {
 		userInfo[socket.id] = object.roomId;
 		socket.join(object.roomId);
 		socket.to(object.roomId).emit('new_user', object);
+		socket.to(socket.id).emit('already_in_room', rooms[roomId]);
 	});
 
 	socket.on('get_connected_users', (roomId) => {
