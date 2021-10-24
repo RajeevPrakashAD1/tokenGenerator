@@ -12,6 +12,7 @@ io.origins((_, callback) => {
 let rooms = {};
 let userInfo = {};
 let hostofroom = {};
+let users = {};
 
 io.on('connection', (socket) => {
 	console.log('a user connected', socket.id);
@@ -22,6 +23,7 @@ io.on('connection', (socket) => {
 		object['socket_id'] = socket.id;
 		rooms[object.roomId] = [ object ];
 		userInfo[socket.id] = object.roomId;
+        users[socket.id] = object;
 
 		hostofroom[roomId] = socket.id;
 		socket.join(object.roomId);
@@ -44,6 +46,7 @@ io.on('connection', (socket) => {
 			rooms[object.roomId] = [ object ];
 		}
 		userInfo[socket.id] = object.roomId;
+        users[socket.id] = object;
 		socket.join(object.roomId);
 		socket.to(object.roomId).emit('new_user', object);
 
@@ -80,8 +83,10 @@ io.on('connection', (socket) => {
 		let rid = userInfo[socket.id];
 		if (rooms[rid]) rooms[rid] = rooms[rid].filter((item) => item.socket_id !== socket.id);
 		delete userInfo[socket.id];
+        let user = users[socket.id];
 
-		socket.emit('user_leave', socket.id);
+
+		socket.emit('user_leave', user);
 	});
 });
 
