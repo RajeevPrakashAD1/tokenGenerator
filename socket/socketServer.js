@@ -46,12 +46,14 @@ io.on('connection', (socket) => {
 		userInfo[socket.id] = object.roomId;
 		socket.join(object.roomId);
 		socket.to(object.roomId).emit('new_user', object);
+
 		socket.to(socket.id).emit('already_in_room', rooms[roomId]);
+		socket.to(socket.id).emit('join_room_success', object);
 	});
 
 	socket.on('get_connected_users', (roomId) => {
 		var clientsList = rooms[roomId];
-		console.log('/////////', clientsList, '//////', roomId);
+
 		socket.emit('list_connected_users', clientsList);
 	});
 
@@ -63,22 +65,23 @@ io.on('connection', (socket) => {
 		let rid = user.roomId;
 		let sid = user.socket_id;
 		hostid = String(hostofroom[rid]);
-		console.log('host id = ', hostid);
 
 		socket.to(hostid).emit('allow_speak', user);
 	});
 
 	socket.on('permission', (user) => {
-		console.log('pe usert', user);
 		socket.to(user.socket_id).emit('client_permission', user.value);
 	});
-
+	socket.on('end_meeting', (id) => {
+		socket.emit('meeting_end', 'meeting had been ended');
+		delete room[id];
+	});
 	socket.on('disconnect', () => {
 		let rid = userInfo[socket.id];
 		if (rooms[rid]) rooms[rid] = rooms[rid].filter((item) => item.socket_id !== socket.id);
 		delete userInfo[socket.id];
 
-		console.log('user disconnect', socket.id);
+		socket.emit('user_leave', socket.id);
 	});
 });
 
@@ -86,7 +89,7 @@ setInterval(() => {
 	console.log('rooms= ', rooms);
 	console.log('userInfo= ', userInfo);
 	console.log('.............................');
-}, 10 * 1000);
+}, 60 * 1000);
 // module.exports = server;
 
 server.listen(8000, () => {
