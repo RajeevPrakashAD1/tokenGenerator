@@ -77,8 +77,8 @@ io.on('connection', (socket) => {
 		socket.to(user.socket_id).emit('client_permission', user.value);
 	});
 	socket.on('end_meeting', (id) => {
-		socket.emit('meeting_end', 'meeting had been ended');
-        console.log("meeting ended id = ",rooms.id);
+		socket.to(id).emit('meeting_end', 'meeting had been ended');
+        console.log("meeting ended id = ",rooms[id]);
 		delete rooms[id];
         
 	});
