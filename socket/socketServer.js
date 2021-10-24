@@ -95,7 +95,7 @@ setInterval(() => {
 	console.log('rooms= ', rooms);
 	console.log('userInfo= ', userInfo);
 	console.log('.............................');
-}, 60 * 1000);
+}, 10 * 1000);
 // module.exports = server;
 
 server.listen(8000, () => {
