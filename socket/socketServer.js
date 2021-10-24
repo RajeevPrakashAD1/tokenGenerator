@@ -29,6 +29,7 @@ io.on('connection', (socket) => {
 		socket.join(object.roomId);
 		socket.to(object.roomId).emit('new_user', object);
 		socket.to(socket.id).emit('already_in_room', rooms[roomId]);
+        socket.to(socket.id).emit('join_room_success', object);
 	});
 
 	socket.on('join_room', (object) => {
