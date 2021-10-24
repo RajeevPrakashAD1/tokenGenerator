@@ -78,7 +78,7 @@ io.on('connection', (socket) => {
 	});
 	socket.on('end_meeting', (id) => {
 		socket.emit('meeting_end', 'meeting had been ended');
-		delete room[id];
+		delete rooms[id];
 	});
 	socket.on('disconnect', () => {
 		let rid = userInfo[socket.id];
