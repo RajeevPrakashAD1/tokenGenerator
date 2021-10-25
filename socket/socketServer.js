@@ -27,9 +27,9 @@ io.on('connection', (socket) => {
 
 		hostofroom[roomId] = socket.id;
 		socket.join(object.roomId);
-		socket.to(object.roomId).emit('new_user', object);
-		socket.to(socket.id).emit('already_in_room', rooms[roomId]);
-        socket.to(socket.id).emit('join_room_success', object);
+		io.to(object.roomId).emit('new_user', object);
+		io.to(socket.id).emit('already_in_room', rooms[roomId]);
+        io.to(socket.id).emit('join_room_success', object);
 	});
 
 	socket.on('join_room', (object) => {
@@ -49,10 +49,10 @@ io.on('connection', (socket) => {
 		userInfo[socket.id] = object.roomId;
         users[socket.id] = object;
 		socket.join(object.roomId);
-		socket.to(object.roomId).emit('new_user', object);
+		io.to(object.roomId).emit('new_user', object);
 
-		socket.to(socket.id).emit('already_in_room', rooms[roomId]);
-		socket.to(socket.id).emit('join_room_success', object);
+		io.to(socket.id).emit('already_in_room', rooms[roomId]);
+		io.to(socket.id).emit('join_room_success', object);
 	});
 
 	socket.on('get_connected_users', (roomId) => {
