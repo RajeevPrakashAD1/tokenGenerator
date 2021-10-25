@@ -87,6 +87,7 @@ io.on('connection', (socket) => {
 		if (rooms[rid]) rooms[rid] = rooms[rid].filter((item) => item.socket_id !== socket.id);
 		delete userInfo[socket.id];
         let user = users[socket.id];
+        console.log("user disconnexted id = ",socket.id);
 
 
 		socket.emit('user_leave', user);
