@@ -67,8 +67,9 @@ io.on('connection', (socket) => {
 		let sid = user.socket_id;
 		console.log('user adked to speak = ', sid);
 		hostid = String(hostofroom[rid]);
+        let newSpeaker = users[sid];
 
-		socket.to(hostid).emit('allow_speak', user);
+		socket.to(hostid).emit('allow_speak', newSpeaker);
 	});
 
 	socket.on('permission', (user) => {
@@ -102,6 +103,9 @@ io.on('connection', (socket) => {
 
 		let roomId = users[socket.id];
 		io.to(roomId).emit('user_leave', user);
+		io.emit('user_leave', user);
+        socket.to(roomId).emit('user_leave', user);
+
 	});
 });
 
