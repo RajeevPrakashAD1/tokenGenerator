@@ -18,27 +18,22 @@ io.on('connection', (socket) => {
 	console.log('a user connected', socket.id);
 
 	socket.on('create_room', (object) => {
-        
 		let roomId = object.roomId;
 		console.log(object.roomId, ' created room');
 		object['socket_id'] = socket.id;
 		rooms[object.roomId] = [ object ];
 		userInfo[socket.id] = object.roomId;
-        users[socket.id] = object;
+		users[socket.id] = object;
 
 		hostofroom[roomId] = socket.id;
 		socket.join(object.roomId);
-        io.to(socket.id).emit('join_room_success', object);
+		io.to(socket.id).emit('join_room_success', object);
 		socket.to(object.roomId).emit('new_user', object);
-	
-     
 	});
 
 	socket.on('join_room', (object) => {
-
-       
 		let roomId = object.roomId;
-        io.to(socket.id).emit('already_in_room', rooms[roomId]);
+		io.to(socket.id).emit('already_in_room', rooms[roomId]);
 		console.log(object.roomId, ' joined room');
 		object['socket_id'] = socket.id;
 
@@ -51,13 +46,10 @@ io.on('connection', (socket) => {
 			rooms[object.roomId] = [ object ];
 		}
 		userInfo[socket.id] = object.roomId;
-        users[socket.id] = object;
+		users[socket.id] = object;
 		socket.join(object.roomId);
-        io.to(socket.id).emit('join_room_success', object);
+		io.to(socket.id).emit('join_room_success', object);
 		socket.to(object.roomId).emit('new_user', object);
-
-		
-		
 	});
 
 	socket.on('get_connected_users', (roomId) => {
@@ -73,7 +65,7 @@ io.on('connection', (socket) => {
 	socket.on('ask_to_speak', (user) => {
 		let rid = user.roomId;
 		let sid = user.socket_id;
-        console.log("user adked to speak = ",sid);
+		console.log('user adked to speak = ', sid);
 		hostid = String(hostofroom[rid]);
 
 		socket.to(hostid).emit('allow_speak', user);
@@ -83,37 +75,33 @@ io.on('connection', (socket) => {
 		socket.to(user.socket_id).emit('client_permission', user.value);
 	});
 
-    socket.on("role_changed",(object)=>{
-        let roomId = object.roomId;
-        let userId = object.socket_id;
-        for(let i of rooms[roomId]){
-            if(i.socket_id == userId){
-                i.role = "speaker";
-            }
-        }
+	socket.on('role_changed', (object) => {
+		let roomId = object.roomId;
+		let userId = object.socket_id;
+		for (let i of rooms[roomId]) {
+			if (i.socket_id == userId) {
+				i.role = 'speaker';
+			}
+		}
 
-        socket.to(roomId).emit("user_changed",userId);
-
-    })
-
-
+		io.to(roomId).emit('user_changed', userId);
+	});
 
 	socket.on('end_meeting', (id) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
-        console.log("meeting ended id = ",rooms[id]);
+		console.log('meeting ended id = ', rooms[id]);
 		delete rooms[id];
-        
 	});
 	socket.on('disconnect', () => {
-        console.log("user disconnect = ",socket.id);
+		console.log('user disconnect = ', socket.id);
 		let rid = userInfo[socket.id];
 		if (rooms[rid]) rooms[rid] = rooms[rid].filter((item) => item.socket_id !== socket.id);
 		delete userInfo[socket.id];
-        let user = users[socket.id];
-        console.log("user disconnexted id = ",socket.id);
+		let user = users[socket.id];
+		console.log('user disconnexted id = ', socket.id);
 
-        let roomId = users[socket.id];
-		socket.to(roomId).emit('user_leave', user);
+		let roomId = users[socket.id];
+		io.to(roomId).emit('user_leave', user);
 	});
 });
 
@@ -121,7 +109,7 @@ setInterval(() => {
 	console.log('rooms= ', rooms);
 	console.log('userInfo= ', userInfo);
 	console.log('.............................');
-}, 10 * 1000);
+}, 30 * 1000);
 // module.exports = server;
 
 server.listen(8000, () => {
