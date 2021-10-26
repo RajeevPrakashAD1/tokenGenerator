@@ -18,6 +18,7 @@ io.on('connection', (socket) => {
 	console.log('a user connected', socket.id);
 
 	socket.on('create_room', (object) => {
+        
 		let roomId = object.roomId;
 		console.log(object.roomId, ' created room');
 		object['socket_id'] = socket.id;
@@ -27,12 +28,15 @@ io.on('connection', (socket) => {
 
 		hostofroom[roomId] = socket.id;
 		socket.join(object.roomId);
-		io.to(object.roomId).emit('new_user', object);
-		io.to(socket.id).emit('already_in_room', rooms[roomId]);
         io.to(socket.id).emit('join_room_success', object);
+		socket.to(object.roomId).emit('new_user', object);
+	
+     
 	});
 
 	socket.on('join_room', (object) => {
+
+        io.to(socket.id).emit('already_in_room', rooms[roomId]);
 		let roomId = object.roomId;
 
 		console.log(object.roomId, ' joined room');
@@ -49,10 +53,11 @@ io.on('connection', (socket) => {
 		userInfo[socket.id] = object.roomId;
         users[socket.id] = object;
 		socket.join(object.roomId);
-		io.to(object.roomId).emit('new_user', object);
+        io.to(socket.id).emit('join_room_success', object);
+		socket.to(object.roomId).emit('new_user', object);
 
-		io.to(socket.id).emit('already_in_room', rooms[roomId]);
-		io.to(socket.id).emit('join_room_success', object);
+		
+		
 	});
 
 	socket.on('get_connected_users', (roomId) => {
@@ -76,6 +81,22 @@ io.on('connection', (socket) => {
 	socket.on('permission', (user) => {
 		socket.to(user.socket_id).emit('client_permission', user.value);
 	});
+
+    socket.on("role_changed",(object)=>{
+        let roomId = object.roomId;
+        let userId = object.socket_id;
+        for(let i of rooms[roomId]){
+            if(i.socket_id == userId){
+                i.role = "speaker";
+            }
+        }
+
+        socket.to(roomId).emit("user_changed",userId);
+
+    })
+
+
+
 	socket.on('end_meeting', (id) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
         console.log("meeting ended id = ",rooms[id]);
@@ -83,6 +104,7 @@ io.on('connection', (socket) => {
         
 	});
 	socket.on('disconnect', () => {
+        console.log("user disconnect = ",socket.id);
 		let rid = userInfo[socket.id];
 		if (rooms[rid]) rooms[rid] = rooms[rid].filter((item) => item.socket_id !== socket.id);
 		delete userInfo[socket.id];
