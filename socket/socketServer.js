@@ -36,9 +36,9 @@ io.on('connection', (socket) => {
 
 	socket.on('join_room', (object) => {
 
-        io.to(socket.id).emit('already_in_room', rooms[roomId]);
+       
 		let roomId = object.roomId;
-
+        io.to(socket.id).emit('already_in_room', rooms[roomId]);
 		console.log(object.roomId, ' joined room');
 		object['socket_id'] = socket.id;
 
