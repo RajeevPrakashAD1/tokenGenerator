@@ -67,15 +67,16 @@ io.on('connection', (socket) => {
 		let sid = user.socket_id;
 		console.log('user adked to speak = ', sid);
 		hostid = String(hostofroom[rid]);
-        let newSpeaker = users[sid];
+		let newSpeaker = users[sid];
 
 		socket.to(hostid).emit('allow_speak', newSpeaker);
 	});
 
 	socket.on('permission', (user) => {
-        console.log("permission asked =",user);
-		io.to(user.socket_id).emit('client_permission', user.value);
+		console.log('permission asked =', user);
+
 		socket.to(user.socket_id).emit('client_permission', user.value);
+		socket.to(socket.id).emit('client_permission', user.value);
 	});
 
 	socket.on('role_changed', (object) => {
@@ -106,8 +107,7 @@ io.on('connection', (socket) => {
 		let roomId = users[socket.id];
 		io.to(roomId).emit('user_leave', user);
 		io.emit('user_leave', user);
-        socket.to(roomId).emit('user_leave', user);
-
+		socket.to(roomId).emit('user_leave', user);
 	});
 });
 
