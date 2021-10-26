@@ -73,6 +73,7 @@ io.on('connection', (socket) => {
 	socket.on('ask_to_speak', (user) => {
 		let rid = user.roomId;
 		let sid = user.socket_id;
+        console.log("user adked to speak = ",sid);
 		hostid = String(hostofroom[rid]);
 
 		socket.to(hostid).emit('allow_speak', user);
@@ -111,8 +112,8 @@ io.on('connection', (socket) => {
         let user = users[socket.id];
         console.log("user disconnexted id = ",socket.id);
 
-
-		socket.emit('user_leave', user);
+        let roomId = users[socket.id];
+		socket.to(roomId).emit('user_leave', user);
 	});
 });
 
