@@ -33,7 +33,11 @@ io.on('connection', (socket) => {
 
 	socket.on('join_room', (object) => {
 		let roomId = object.roomId;
-		io.to(socket.id).emit('already_in_room', rooms[roomId]);
+        let already_in = [] ;
+        if(rooms[roomId].length != 0){
+            already_in = rooms[roomId];
+        }
+		io.to(socket.id).emit('already_in_room', already_in);
 		console.log(object.roomId, ' joined room');
 		object['socket_id'] = socket.id;
 
