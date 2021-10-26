@@ -75,6 +75,7 @@ io.on('connection', (socket) => {
 	socket.on('permission', (user) => {
         console.log("permission asked =",user);
 		io.to(user.socket_id).emit('client_permission', user.value);
+		socket.to(user.socket_id).emit('client_permission', user.value);
 	});
 
 	socket.on('role_changed', (object) => {
