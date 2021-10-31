@@ -1,7 +1,9 @@
 const express = require('express');
 const app = express();
 const http = require('http');
+const axios = require('axios');
 const server = http.createServer(app);
+
 
 const io = require('socket.io')(server);
 io.origins((_, callback) => {
@@ -33,10 +35,10 @@ io.on('connection', (socket) => {
 
 	socket.on('join_room', (object) => {
 		let roomId = object.roomId;
-        let already_in = [] ;
-        if(rooms[roomId].length != 0){
-            already_in = rooms[roomId];
-        }
+		let already_in = [];
+		if (rooms[roomId].length != 0) {
+			already_in = rooms[roomId];
+		}
 		io.to(socket.id).emit('already_in_room', already_in);
 		console.log(object.roomId, ' joined room');
 		object['socket_id'] = socket.id;
@@ -80,7 +82,6 @@ io.on('connection', (socket) => {
 		console.log('permission asked =', user);
 
 		socket.to(user.socket_id).emit('client_permission', user.value);
-		socket.to(socket.id).emit('client_permission', user.value);
 	});
 
 	socket.on('role_changed', (object) => {
@@ -92,26 +93,42 @@ io.on('connection', (socket) => {
 			}
 		}
 
-		io.to(roomId).emit('user_changed', userId);
+		socket.to(roomId).emit('user_changed', userId);
 	});
 
 	socket.on('end_meeting', (id) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
+
 		console.log('meeting ended id = ', rooms[id]);
+        axios.post("http://localhost:8080/deleteliveroom",{
+            "_id":id
+        }).then( (res) => {
+                console.log("delte res = ",res);
+        }).catch( (err) => {
+            console.log("delte error = ",err);
+        });
+
 		delete rooms[id];
 	});
+
+    socket.on("leave_assign",(object)=>{
+        hostofroom[object.roomId] = object.socket_id;
+        let roomId = object.roomId;
+		let userId = object.socket_id;
+		for (let i of rooms[roomId]) {
+			if (i.socket_id == userId) {
+				i.role = 'speaker';
+			}
+		}
+        
+    })
+
 	socket.on('disconnect', () => {
 		console.log('user disconnect = ', socket.id);
-		let rid = userInfo[socket.id];
-		if (rooms[rid]) rooms[rid] = rooms[rid].filter((item) => item.socket_id !== socket.id);
-		delete userInfo[socket.id];
-		let user = users[socket.id];
-		console.log('user disconnexted id = ', socket.id);
 
 		let roomId = users[socket.id];
-		io.to(roomId).emit('user_leave', user);
-		io.emit('user_leave', user);
-		socket.to(roomId).emit('user_leave', user);
+        delete userInfo[socket.id];
+		socket.to(roomId).emit('user_leave', userInfo[socket.id]);
 	});
 });
 
