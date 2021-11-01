@@ -137,7 +137,7 @@ io.on('connection', (socket) => {
 		let roomId = userInfo[socket.id];
         console.log("roomid of disconnected user=",roomId);
 		delete userInfo[socket.id];
-		socket.to(roomId).emit('user_leave', userInfo[socket.id]);
+		socket.to(roomId).emit('user_leave', users[socket.id]);
 	});
 });
 
