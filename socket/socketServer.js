@@ -102,22 +102,19 @@ io.on('connection', (socket) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
 
 		console.log('meeting ended id = ', rooms[id]);
-		if (mongoose.Types.ObjectId.isValid(id)) {
-			axios
-				.post('http://localhost:8080/deleteliveroom', {
-					channelName:id
-				})
-				.then((res) => {
-					console.log('delte res = ', res);
-				})
-				.catch((err) => {
-					console.log('delte error = ', err);
-				});
 
-			delete rooms[id];
-		} else {
-			console.log('not valid id for deleteing room');
-		}
+		axios
+			.post('http://localhost:8080/deleteliveroom', {
+				channelName: id
+			})
+			.then((res) => {
+				console.log('delte res = ', res);
+			})
+			.catch((err) => {
+				console.log('delte error = ', err);
+			});
+
+		delete rooms[id];
 	});
 
 	socket.on('leave_assign', (object) => {
@@ -135,7 +132,7 @@ io.on('connection', (socket) => {
 		console.log('user disconnect = ', socket.id);
 
 		let roomId = userInfo[socket.id];
-        console.log("roomid of disconnected user=",roomId);
+		console.log('roomid of disconnected user=', roomId);
 		delete userInfo[socket.id];
 		socket.to(roomId).emit('user_leave', users[socket.id]);
 	});
