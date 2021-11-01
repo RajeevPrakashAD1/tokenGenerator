@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const http = require('http');
 const axios = require('axios');
-const mongoose =require('mongoose'); 
+const mongoose = require('mongoose');
 const server = http.createServer(app);
 
 const io = require('socket.io')(server);
@@ -36,8 +36,10 @@ io.on('connection', (socket) => {
 	socket.on('join_room', (object) => {
 		let roomId = object.roomId;
 		let already_in = [];
-		if (rooms[roomId].length != 0) {
-			already_in = rooms[roomId];
+		if (rooms[roomId]) {
+			if (rooms[roomId].length != 0) {
+				already_in = rooms[roomId];
+			}
 		}
 		io.to(socket.id).emit('already_in_room', already_in);
 		console.log(object.roomId, ' joined room');
@@ -132,7 +134,8 @@ io.on('connection', (socket) => {
 	socket.on('disconnect', () => {
 		console.log('user disconnect = ', socket.id);
 
-		let roomId = users[socket.id];
+		let roomId = userInfo[socket.id];
+        console.log("roomid of disconnected user=",roomId);
 		delete userInfo[socket.id];
 		socket.to(roomId).emit('user_leave', userInfo[socket.id]);
 	});

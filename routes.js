@@ -9,6 +9,7 @@ const roomController = require('./room/roomcontroller');
 router.route('/access_token').get(tokenController.nocache, tokenController.generateAcessToken);
 router.route('/create_room').post(roomController.createRoom);
 router.route('/liveroom').get(roomController.getLiveRoom);
+router.route('/scheduledroom').get(roomController.getScheduledRoom);
 router.route('/deleteliveroom').post(roomController.delteLiveRoom);
 router.route('/deletescheduledroom').post(roomController.delteScheduledRoom);
 
