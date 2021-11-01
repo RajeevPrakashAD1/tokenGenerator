@@ -105,7 +105,7 @@ io.on('connection', (socket) => {
 		if (mongoose.Types.ObjectId.isValid(id)) {
 			axios
 				.post('http://localhost:8080/deleteliveroom', {
-					_id: id
+					channelName:id
 				})
 				.then((res) => {
 					console.log('delte res = ', res);
