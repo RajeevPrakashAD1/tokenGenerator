@@ -109,6 +109,7 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('leave_assign', (object) => {
+        console.log("leave and assign called = ", object);
 		hostofroom[object.roomId] = object.socket_id;
 		let roomId = object.roomId;
 		let userId = object.socket_id;
@@ -117,6 +118,11 @@ io.on('connection', (socket) => {
 				i.role = 'speaker';
 			}
 		}
+        users[userId].role = "speaker";
+        socket.to(roomId).emit("host_changed",users[userId]);
+        
+
+        
 	});
 
 	socket.on('disconnect', () => {
