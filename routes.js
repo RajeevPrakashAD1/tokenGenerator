@@ -13,5 +13,8 @@ router.route('/scheduledroom').get(roomController.getScheduledRoom);
 router.route('/deleteliveroom').post(roomController.delteLiveRoom);
 router.route('/deletescheduledroom').post(roomController.delteScheduledRoom);
 
+router.route('/updatehost').post(roomController.updateHost);
+router.route('/get_particular_rooms').get(roomController.getParticularRooms);
+
 
 module.exports = router;

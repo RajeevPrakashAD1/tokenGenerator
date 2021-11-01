@@ -6,24 +6,27 @@ const checkScheduledMeetings = async (req, res, next) => {
 	// console.log('aya');
 	// console.log(Date());
 
-	let cd = new Date();
-	console.log(cd, '=cd');
-	let hr = cd.getHours() + 5;
-	let min = cd.getMinutes() + 30;
+	let cd = new Date().toISOString();
+    
+    cd = cd.substring(0, cd.length-8);
+    console.log("checking_date_time = ",cd);
+	// console.log(cd, '=cd');
+	// let hr = cd.getHours() + 5;
+	// let min = cd.getMinutes() + 30;
 
-	if (hr > 24) hr = hr - 24;
-	if (min > 60) {
-		hr += 1;
-		min = min - 60;
-	}
+	// if (hr > 24) hr = hr - 24;
+	// if (min > 60) {
+	// 	hr += 1;
+	// 	min = min - 60;
+	// }
 
-	hr = hr.toString();
-	min = min.toString();
-	if (hr.length < 2) hr = '0' + hr;
-	if (min.length < 2) min = '0' + min;
-	const time = hr + ':' + min;
-	console.log(time);
-	const smt = await ScheduledRoom.find({ scheduledTime: time }).exec();
+	// hr = hr.toString();
+	// min = min.toString();
+	// if (hr.length < 2) hr = '0' + hr;
+	// if (min.length < 2) min = '0' + min;
+	// const time = hr + ':' + min;
+	// console.log(time);
+	const smt = await ScheduledRoom.find({ scheduledTime: cd }).exec();
 	console.log('smt', smt);
 	for (let j of smt) {
 		// const no = { ...j };

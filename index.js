@@ -66,7 +66,7 @@ app.use((err, req, res, next) => {
 	});
 });
 
-setInterval(checkScheduledMeetings, 1000 * 60);
+setInterval(checkScheduledMeetings, 1000 * 10);
 
 // server.listen(PORT2, () => {
 // 	console.log('listening on *:', PORT2);

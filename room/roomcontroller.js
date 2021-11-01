@@ -12,19 +12,17 @@ const catchAsync = (fn) => {
 exports.createRoom = catchAsync(async (req, res, next) => {
 	console.log('date time', req.body.scheduledTime);
 	if (req.body.scheduledTime && req.body.scheduledTime != '') {
-		let time = req.body.scheduledTime;
-		req.body.scheduledTimeWithFormat = req.body.scheduledTime;
-		time = String(time);
-		time = time.split(' ')[1].substring(0, 5);
-		req.body.scheduledTime = time;
+        req.body.scheduledTimeWithFormat = req.body.scheduledTime;
+		let date = new Date(req.body.scheduledTime);
+		let newDate = date.toISOString();
+		
+		newDate = newDate.substring(0, newDate.length - 8);
+		req.body.scheduledTime = newDate;
+        
 
-		// let date = new Date(req.body.scheduledTime);
-		// console.log('date: ' + date);
-		// date = date.toISOString();
-		// let datestring = req.body.scheduledTime;
-		// let date = new Date(datestring).toISOString();
+		
 
-		// console.log(req.body, 'bsy requested');
+		
 	}
 
 	if (req.body.scheduled == 'true') {
@@ -77,13 +75,26 @@ exports.getScheduledRoom = catchAsync(async (req, res, next) => {
 exports.delteLiveRoom = catchAsync(async (req, res, next) => {
 	console.log('delte room request = ', req.body.channelName);
 	const status = await LiveRoom.deleteOne({ channelName: req.body.channelName });
-	res.send({ _id: req.body.channelName});
+	res.send({ channelName: req.body.channelName });
 });
 
-
 exports.delteScheduledRoom = catchAsync(async (req, res, next) => {
-	const status = await ScheduledRoom.deleteOne({ _id: req.body._id });
-	res.send({ _id: req.body._id });
+	const status = await ScheduledRoom.deleteOne({ channelName: req.body.channelName });
+	res.send({ channelName: req.body._id });
+});
+exports.updateHost = catchAsync(async (req, res, next) => {
+	console.log('new host name == ', req.body.hostName);
+	const status = await LiveRoom.findOneAndUpdate(
+		{ channelName: req.body.channelName },
+		{ hostName: req.body.hostName }
+	);
+	res.send({ status: status, newhostname: req.body.hostName });
+});
+
+exports.getParticularRooms = catchAsync(async (req, res, next) => {
+	console.log('get particular room query', req.query);
+	const rooms = await LiveRoom.find(req.query);
+	res.send({ rooms: rooms });
 });
 
 // exports.getFilteredRoom = catchAsync(async (req, res, next) => {

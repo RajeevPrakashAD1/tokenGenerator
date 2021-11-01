@@ -120,6 +120,17 @@ io.on('connection', (socket) => {
 		}
         users[userId].role = "speaker";
         socket.to(roomId).emit("host_changed",users[userId]);
+        axios.post('http://35.154.237.208:8080/updateHost',{
+            
+            "channelName": roomId,
+            "hostName":users[userId].userName
+            
+        }).then(function(response) {
+            console.log("response of changing host = ",response);
+        }).catch(function(error) {
+            console.log("host change error",error);
+        })
+        
         
 
         
@@ -138,6 +149,7 @@ io.on('connection', (socket) => {
 setInterval(() => {
 	console.log('rooms= ', rooms);
 	console.log('userInfo= ', userInfo);
+    console.log("users = ", users);
 	console.log('.............................');
 }, 30 * 1000);
 // module.exports = server;
