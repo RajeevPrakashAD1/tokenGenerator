@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 const http = require('http');
 const axios = require('axios');
+const mongoose =require('mongoose'); 
 const server = http.createServer(app);
-
 
 const io = require('socket.io')(server);
 io.origins((_, callback) => {
@@ -100,34 +100,40 @@ io.on('connection', (socket) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
 
 		console.log('meeting ended id = ', rooms[id]);
-        axios.post("http://localhost:8080/deleteliveroom",{
-            "_id":id
-        }).then( (res) => {
-                console.log("delte res = ",res);
-        }).catch( (err) => {
-            console.log("delte error = ",err);
-        });
+		if (mongoose.Types.ObjectId.isValid(id)) {
+			axios
+				.post('http://localhost:8080/deleteliveroom', {
+					_id: id
+				})
+				.then((res) => {
+					console.log('delte res = ', res);
+				})
+				.catch((err) => {
+					console.log('delte error = ', err);
+				});
 
-		delete rooms[id];
+			delete rooms[id];
+		} else {
+			console.log('not valid id for deleteing room');
+		}
 	});
 
-    socket.on("leave_assign",(object)=>{
-        hostofroom[object.roomId] = object.socket_id;
-        let roomId = object.roomId;
+	socket.on('leave_assign', (object) => {
+		hostofroom[object.roomId] = object.socket_id;
+		let roomId = object.roomId;
 		let userId = object.socket_id;
 		for (let i of rooms[roomId]) {
 			if (i.socket_id == userId) {
 				i.role = 'speaker';
 			}
 		}
-        
-    })
+	});
 
 	socket.on('disconnect', () => {
 		console.log('user disconnect = ', socket.id);
 
 		let roomId = users[socket.id];
-        delete userInfo[socket.id];
+		delete userInfo[socket.id];
 		socket.to(roomId).emit('user_leave', userInfo[socket.id]);
 	});
 });
