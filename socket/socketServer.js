@@ -103,16 +103,7 @@ io.on('connection', (socket) => {
 
 		console.log('meeting ended id = ', rooms[id]);
 
-		axios
-			.post('http://localhost:8080/deleteliveroom', {
-				channelName: id
-			})
-			.then((res) => {
-				console.log('delte res = ', res);
-			})
-			.catch((err) => {
-				console.log('delte error = ', err);
-			});
+		
 
 		delete rooms[id];
 	});

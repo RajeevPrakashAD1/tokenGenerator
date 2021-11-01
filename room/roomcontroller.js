@@ -75,10 +75,12 @@ exports.getScheduledRoom = catchAsync(async (req, res, next) => {
 });
 
 exports.delteLiveRoom = catchAsync(async (req, res, next) => {
-	console.log('delte room request = ', req.body._id);
-	const status = await LiveRoom.deleteOne({ _id: req.body._id });
-	res.send({ _id: req.body._id });
+	console.log('delte room request = ', req.body.channelName);
+	const status = await LiveRoom.deleteOne({ channelName: req.body.channelName });
+	res.send({ _id: req.body.channelName});
 });
+
+
 exports.delteScheduledRoom = catchAsync(async (req, res, next) => {
 	const status = await ScheduledRoom.deleteOne({ _id: req.body._id });
 	res.send({ _id: req.body._id });
