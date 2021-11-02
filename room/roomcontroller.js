@@ -80,7 +80,7 @@ exports.delteLiveRoom = catchAsync(async (req, res, next) => {
 
 exports.delteScheduledRoom = catchAsync(async (req, res, next) => {
 	const status = await ScheduledRoom.deleteOne({ channelName: req.body.channelName });
-	res.send({ channelName: req.body._id });
+	res.send({ channelName: req.body.channelName });
 });
 exports.updateHost = catchAsync(async (req, res, next) => {
 	console.log('new host name == ', req.body.hostName);

@@ -102,6 +102,17 @@ io.on('connection', (socket) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
 
 		console.log('meeting ended id = ', rooms[id]);
+        axios
+			.post('http://35.154.237.208:8080/deleteliveroom', {
+				channelName: id,
+				
+			})
+			.then(function(response) {
+				console.log('response of deleting  room = ', response);
+			})
+			.catch(function(error) {
+				console.log('deleting room err = ', error);
+			});
 
 		delete rooms[id];
 	});
