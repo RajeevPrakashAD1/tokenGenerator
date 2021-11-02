@@ -103,13 +103,11 @@ io.on('connection', (socket) => {
 
 		console.log('meeting ended id = ', rooms[id]);
 
-		
-
 		delete rooms[id];
 	});
 
 	socket.on('leave_assign', (object) => {
-        console.log("leave and assign called = ", object);
+		console.log('leave and assign called = ', object);
 		hostofroom[object.roomId] = object.socket_id;
 		let roomId = object.roomId;
 		let userId = object.socket_id;
@@ -118,23 +116,20 @@ io.on('connection', (socket) => {
 				i.role = 'speaker';
 			}
 		}
-        users[userId].role = "speaker";
-        socket.to(roomId).emit("host_changed",users[userId]);
-        axios.post('http://35.154.237.208:8080/updateHost',{
-            
-            "channelName": roomId,
-            "hostName":users[userId].userName,
-            "userId":users[userId].userId,
-            
-        }).then(function(response) {
-            console.log("response of changing host = ",response);
-        }).catch(function(error) {
-            console.log("host change error",error);
-        })
-        
-        
-
-        
+		users[userId].role = 'speaker';
+		socket.to(roomId).emit('host_changed', users[userId]);
+		axios
+			.post('http://35.154.237.208:8080/updateHost', {
+				channelName: roomId,
+				hostName: users[userId].userName,
+				userId: users[userId].userId
+			})
+			.then(function(response) {
+				console.log('response of changing host = ', response);
+			})
+			.catch(function(error) {
+				console.log('host change error', error);
+			});
 	});
 
 	socket.on('disconnect', () => {
@@ -142,7 +137,12 @@ io.on('connection', (socket) => {
 
 		let roomId = userInfo[socket.id];
 		console.log('roomid of disconnected user=', roomId);
+		if (roomId) {
+			rooms[roomId] = rooms[roomId].filter((r) => r.socket_id != socket.id);
+		}
 		delete userInfo[socket.id];
+		delete users[socket.id];
+
 		socket.to(roomId).emit('user_leave', users[socket.id]);
 	});
 });
@@ -150,7 +150,7 @@ io.on('connection', (socket) => {
 setInterval(() => {
 	console.log('rooms= ', rooms);
 	console.log('userInfo= ', userInfo);
-    console.log("users = ", users);
+	console.log('users = ', users);
 	console.log('.............................');
 }, 60 * 1000);
 // module.exports = server;
