@@ -147,8 +147,9 @@ io.on('connection', (socket) => {
 		console.log('user disconnect = ', socket.id);
 
 		let roomId = userInfo[socket.id];
+        let host = hostofroom[roomId];
 		console.log('roomid of disconnected user=', roomId);
-		if (roomId) {
+		if (roomId && host !== socket.id) {
 			rooms[roomId] = rooms[roomId].filter((r) => r.socket_id != socket.id);
 		}
 		delete userInfo[socket.id];
@@ -164,7 +165,7 @@ setInterval(() => {
 	console.log('userInfo= ', userInfo);
 	console.log('users = ', users);
 	console.log('.............................');
-}, 60 * 1000);
+}, 20 * 1000);
 // module.exports = server;
 
 server.listen(8000, () => {

@@ -27,7 +27,7 @@ const checkScheduledMeetings = async (req, res, next) => {
 	// const time = hr + ':' + min;
 	// console.log(time);
 	const smt = await ScheduledRoom.find({ scheduledTime: cd }).exec();
-	console.log('smt = ', smt);
+	// console.log('smt = ', smt);
 	for (let j of smt) {
 		// const no = { ...j };
 		// delete no['_id'];
