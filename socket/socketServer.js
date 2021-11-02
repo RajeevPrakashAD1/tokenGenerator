@@ -141,9 +141,10 @@ io.on('connection', (socket) => {
 			rooms[roomId] = rooms[roomId].filter((r) => r.socket_id != socket.id);
 		}
 		delete userInfo[socket.id];
-		delete users[socket.id];
+		
 
 		socket.to(roomId).emit('user_leave', users[socket.id]);
+        delete users[socket.id];
 	});
 });
 
