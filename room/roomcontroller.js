@@ -13,8 +13,9 @@ exports.createRoom = catchAsync(async (req, res, next) => {
 	console.log('date time', req.body.scheduledTime);
 	if (req.body.scheduledTime && req.body.scheduledTime != '') {
         req.body.scheduledTimeWithFormat = req.body.scheduledTime;
-		let date = new Date(req.body.scheduledTime);
-		let newDate = date.toISOString();
+		let newDate = new Date(req.body.scheduledTime).toISOString();
+		
+        console.log('date time for scheduled', newDate);
 		
 		newDate = newDate.substring(0, newDate.length - 8);
 		req.body.scheduledTime = newDate;

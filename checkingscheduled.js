@@ -6,10 +6,11 @@ const checkScheduledMeetings = async (req, res, next) => {
 	// console.log('aya');
 	// console.log(Date());
 
-	let cd = new Date().toISOString();
-    
-    cd = cd.substring(0, cd.length-8);
-    // console.log("checking_date_time = ",cd);
+	let cd = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+	cd = new Date(cd).toISOString();
+
+	cd = cd.substring(0, cd.length - 8);
+	console.log("checking_date_time = ",cd);
 	// console.log(cd, '=cd');
 	// let hr = cd.getHours() + 5;
 	// let min = cd.getMinutes() + 30;
