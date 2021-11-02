@@ -9,12 +9,13 @@ const roomController = require('./room/roomcontroller');
 router.route('/access_token').get(tokenController.nocache, tokenController.generateAcessToken);
 router.route('/create_room').post(roomController.createRoom);
 router.route('/liveroom').get(roomController.getLiveRoom);
+router.route('/particular/liveroom').get(roomController.getParticularLiveRooms);
+
 router.route('/scheduledroom').get(roomController.getScheduledRoom);
+router.route('/particular/scheduledroom').get(roomController.getParticularScheduledRooms);
 router.route('/deleteliveroom').post(roomController.delteLiveRoom);
 router.route('/deletescheduledroom').post(roomController.delteScheduledRoom);
 
 router.route('/updatehost').post(roomController.updateHost);
-router.route('/get_particular_rooms').get(roomController.getParticularRooms);
-
 
 module.exports = router;

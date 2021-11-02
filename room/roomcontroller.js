@@ -91,9 +91,14 @@ exports.updateHost = catchAsync(async (req, res, next) => {
 	res.send({ status: status, newhostname: req.body.hostName });
 });
 
-exports.getParticularRooms = catchAsync(async (req, res, next) => {
+exports.getParticularLiveRooms = catchAsync(async (req, res, next) => {
 	console.log('get particular room query', req.query);
 	const rooms = await LiveRoom.find(req.query);
+	res.send({ rooms: rooms });
+});
+exports.getParticularScheduledRooms = catchAsync(async (req, res, next) => {
+	console.log('get particular room query', req.query);
+	const rooms = await ScheduledRoom.find(req.query);
 	res.send({ rooms: rooms });
 });
 
