@@ -86,7 +86,7 @@ exports.updateHost = catchAsync(async (req, res, next) => {
 	console.log('new host name == ', req.body.hostName);
 	const status = await LiveRoom.findOneAndUpdate(
 		{ channelName: req.body.channelName },
-		{ hostName: req.body.hostName }
+		{ hostName: req.body.hostName,userId:req.body.userId }
 	);
 	res.send({ status: status, newhostname: req.body.hostName });
 });

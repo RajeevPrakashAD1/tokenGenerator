@@ -123,7 +123,8 @@ io.on('connection', (socket) => {
         axios.post('http://35.154.237.208:8080/updateHost',{
             
             "channelName": roomId,
-            "hostName":users[userId].userName
+            "hostName":users[userId].userName,
+            "userId":users[userId].userId,
             
         }).then(function(response) {
             console.log("response of changing host = ",response);
