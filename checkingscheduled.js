@@ -9,7 +9,7 @@ const checkScheduledMeetings = async (req, res, next) => {
 	let cd = new Date().toISOString();
     
     cd = cd.substring(0, cd.length-8);
-    console.log("checking_date_time = ",cd);
+    // console.log("checking_date_time = ",cd);
 	// console.log(cd, '=cd');
 	// let hr = cd.getHours() + 5;
 	// let min = cd.getMinutes() + 30;
@@ -27,7 +27,7 @@ const checkScheduledMeetings = async (req, res, next) => {
 	// const time = hr + ':' + min;
 	// console.log(time);
 	const smt = await ScheduledRoom.find({ scheduledTime: cd }).exec();
-	console.log('smt', smt);
+	console.log('smt = ', smt);
 	for (let j of smt) {
 		// const no = { ...j };
 		// delete no['_id'];

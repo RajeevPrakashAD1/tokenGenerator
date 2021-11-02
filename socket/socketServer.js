@@ -152,7 +152,7 @@ setInterval(() => {
 	console.log('userInfo= ', userInfo);
     console.log("users = ", users);
 	console.log('.............................');
-}, 30 * 1000);
+}, 60 * 1000);
 // module.exports = server;
 
 server.listen(8000, () => {
