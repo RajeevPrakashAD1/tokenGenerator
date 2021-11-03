@@ -98,6 +98,18 @@ io.on('connection', (socket) => {
 		socket.to(roomId).emit('user_changed', userId);
 	});
 
+    socket.on("remove_speaker",(obj)=>{
+        let roomId = obj.roomId;
+        let userId = obj.socket_id;
+        for (let i of rooms[roomId]) {
+			if (i.socket_id == userId) {
+				i.role = 'listner';
+			}
+		}
+        socket.emit("speaker_removed",userId)
+
+    })
+
 	socket.on('end_meeting', (id) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
 
