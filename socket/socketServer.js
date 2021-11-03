@@ -106,7 +106,8 @@ io.on('connection', (socket) => {
 				i.role = 'listner';
 			}
 		}
-        socket.emit("speaker_removed",userId)
+        socket.to(roomId).emit("speaker_removed",userId);
+        
 
     })
 
@@ -136,10 +137,10 @@ io.on('connection', (socket) => {
 		let userId = object.socket_id;
 		for (let i of rooms[roomId]) {
 			if (i.socket_id == userId) {
-				i.role = 'speaker';
+				i.role = 'host';
 			}
 		}
-		users[userId].role = 'speaker';
+		users[userId].role = 'host';
 		socket.to(roomId).emit('host_changed', users[userId]);
 		axios
 			.post('http://35.154.237.208:8080/updateHost', {
@@ -161,7 +162,7 @@ io.on('connection', (socket) => {
 		let roomId = userInfo[socket.id];
         let host = hostofroom[roomId];
 		console.log('roomid of disconnected user=', roomId);
-		if (roomId && host !== socket.id) {
+		if (roomId && host !== socket.id && rooms[roomId]) {
 			rooms[roomId] = rooms[roomId].filter((r) => r.socket_id != socket.id);
 		}
 		delete userInfo[socket.id];

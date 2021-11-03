@@ -98,7 +98,7 @@ exports.getParticularLiveRooms = catchAsync(async (req, res, next) => {
 	res.send({ rooms: rooms });
 });
 exports.getParticularScheduledRooms = catchAsync(async (req, res, next) => {
-	console.log('get particular room query', req.query);
+	console.log('get particular scheduled  room query', req.query);
 	const rooms = await ScheduledRoom.find(req.query);
 	res.send({ rooms: rooms });
 });
