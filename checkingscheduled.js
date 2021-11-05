@@ -10,7 +10,7 @@ const checkScheduledMeetings = async (req, res, next) => {
 	cd = new Date(cd).toISOString();
 
 	cd = cd.substring(0, cd.length - 8);
-	console.log("checking_date_time = ",cd);
+	// console.log("checking_date_time = ",cd);
 	// console.log(cd, '=cd');
 	// let hr = cd.getHours() + 5;
 	// let min = cd.getMinutes() + 30;

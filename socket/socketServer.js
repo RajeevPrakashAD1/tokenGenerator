@@ -103,13 +103,14 @@ io.on('connection', (socket) => {
         let roomId = obj.roomId;
         let userId = obj.socket_id;
         let host = hostofroom[roomId];
+        console.log("host while rs = ",host);
         for (let i of rooms[roomId]) {
-			if (i.socket_id == userId) {
+			if (i.socket_id === userId) {
 				i.role = 'audience';
 			}
 		}
-        socket.to(roomId).emit("speaker_removed",userId);
-        socket.to(host).emit("speaker_removed",userId);
+        io.to(roomId).emit("speaker_removed",userId);
+        
         
 
     })
