@@ -9,6 +9,10 @@ const catchAsync = (fn) => {
 	};
 };
 
+exports.home = catchAsync(async (req, res, next) => {
+    res.send({status:"No such routes"})
+})
+
 exports.createRoom = catchAsync(async (req, res, next) => {
 	console.log('date time', req.body.scheduledTime);
 	if (req.body.scheduledTime && req.body.scheduledTime != '') {

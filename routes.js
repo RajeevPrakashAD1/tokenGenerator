@@ -17,5 +17,6 @@ router.route('/deleteliveroom').post(roomController.delteLiveRoom);
 router.route('/deletescheduledroom').post(roomController.delteScheduledRoom);
 
 router.route('/updatehost').post(roomController.updateHost);
+router.route("/").get(roomController.home)
 
 module.exports = router;

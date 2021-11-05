@@ -99,11 +99,12 @@ io.on('connection', (socket) => {
 	});
 
     socket.on("remove_speaker",(obj)=>{
+        console.log("remove speaker callded = ",obj.socket_id);
         let roomId = obj.roomId;
         let userId = obj.socket_id;
         for (let i of rooms[roomId]) {
 			if (i.socket_id == userId) {
-				i.role = 'listner';
+				i.role = 'audience';
 			}
 		}
         socket.to(roomId).emit("speaker_removed",userId);
