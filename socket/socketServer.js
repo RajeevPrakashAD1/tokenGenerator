@@ -102,12 +102,14 @@ io.on('connection', (socket) => {
         console.log("remove speaker callded = ",obj.socket_id);
         let roomId = obj.roomId;
         let userId = obj.socket_id;
+        let host = hostofroom[roomId];
         for (let i of rooms[roomId]) {
 			if (i.socket_id == userId) {
 				i.role = 'audience';
 			}
 		}
         socket.to(roomId).emit("speaker_removed",userId);
+        socket.to(host).emit("speaker_removed",userId);
         
 
     })
@@ -122,7 +124,7 @@ io.on('connection', (socket) => {
 				
 			})
 			.then(function(response) {
-				console.log('response of deleting  room = ', response);
+				console.log('response of deleting  room successful id =  ',id );
 			})
 			.catch(function(error) {
 				console.log('deleting room err = ', error);
@@ -179,7 +181,7 @@ setInterval(() => {
 	console.log('userInfo= ', userInfo);
 	console.log('users = ', users);
 	console.log('.............................');
-}, 20 * 1000);
+}, 60 * 1000);
 // module.exports = server;
 
 server.listen(8000, () => {
