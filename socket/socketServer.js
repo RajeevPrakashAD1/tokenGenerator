@@ -15,15 +15,28 @@ let rooms = {};
 let userInfo = {};
 let hostofroom = {};
 let users = {};
+const url = 'http://localhost:8080';
 
 io.on('connection', (socket) => {
 	console.log('a user connected', socket.id);
 
-	socket.on('create_room', (object) => {
+	socket.on('create_room', async (object) => {
 		let roomId = object.roomId;
 		console.log(object.roomId, ' created room');
 		object['socket_id'] = socket.id;
+		object['roomId'] = roomId;
 		rooms[object.roomId] = [ object ];
+
+		//adding user in userSchema
+
+		try {
+			res = await axios.post(url + '/user/add', object);
+
+			console.log('response of adding user =  ', res.data);
+		} catch (err) {
+			console.log('adding user err', err.message);
+		}
+
 		userInfo[socket.id] = object.roomId;
 		users[socket.id] = object;
 
@@ -33,26 +46,55 @@ io.on('connection', (socket) => {
 		socket.to(object.roomId).emit('new_user', object);
 	});
 
-	socket.on('join_room', (object) => {
+	socket.on('join_room', async (object) => {
 		let roomId = object.roomId;
+		console.log('joining roomid', roomId);
 		let already_in = [];
-		if (rooms[roomId]) {
-			if (rooms[roomId].length != 0) {
-				already_in = rooms[roomId];
-			}
+		object['socket_id'] = socket.id;
+		object['roomId'] = roomId;
+		// if (rooms[roomId]) {
+		// 	if (rooms[roomId].length != 0) {
+		// 		already_in = rooms[roomId];
+		// 	}
+		// }
+
+		//const res = await axios.get('https://httpbin.org/get', { params: { answer: 42 } });
+		// axios
+		// 	.get(url + '/user', { params: { roomId: roomId } })
+		// 	.then((response) => {
+		// 		already_in = response.data['users'];
+		// 		console.log('rs of get user already_in', already_in);
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log('getting user err', err.message);
+		// 	});
+		try {
+			res = await axios.get(url + '/user', { params: { roomId: roomId } });
+			already_in = res.data.users;
+			console.log('rs of get user already_in', res.data.users);
+		} catch (err) {
+			console.log('getting user err', err.message);
 		}
+
+		try {
+			res = await axios.post(url + '/user/add', object);
+
+			console.log('response of adding user =  ', res.data);
+		} catch (err) {
+			console.log('adding user err', err.message);
+		}
+
 		io.to(socket.id).emit('already_in_room', already_in);
 		console.log(object.roomId, ' joined room');
-		object['socket_id'] = socket.id;
 
-		if (rooms[object.roomId]) {
-			rooms[object.roomId].push(object);
-		} else {
-			console.log(object.roomId, ' created room');
-			object['socket_id'] = socket.id;
-			hostofroom[roomId] = socket.id;
-			rooms[object.roomId] = [ object ];
-		}
+		// if (rooms[object.roomId]) {
+		// 	rooms[object.roomId].push(object);
+		// } else {
+		// 	console.log(object.roomId, ' created room');
+		// 	object['socket_id'] = socket.id;
+		// 	hostofroom[roomId] = socket.id;
+		// 	rooms[object.roomId] = [ object ];
+		// }
 		userInfo[socket.id] = object.roomId;
 		users[socket.id] = object;
 		socket.join(object.roomId);
@@ -60,8 +102,15 @@ io.on('connection', (socket) => {
 		socket.to(object.roomId).emit('new_user', object);
 	});
 
-	socket.on('get_connected_users', (roomId) => {
-		var clientsList = rooms[roomId];
+	socket.on('get_connected_users', async (roomId) => {
+		var clientsList = [];
+		try {
+			res = await axios.get(url + '/user', { params: { roomId: roomId } });
+			clientsList = res.data.users;
+			console.log('rs of get user already_in', res.data.users);
+		} catch (err) {
+			console.log('getting user err', err.message);
+		}
 
 		socket.emit('list_connected_users', clientsList);
 	});
@@ -70,12 +119,28 @@ io.on('connection', (socket) => {
 		delete rooms[roomId];
 	});
 
-	socket.on('ask_to_speak', (user) => {
+	socket.on('ask_to_speak', async (user) => {
 		let rid = user.roomId;
 		let sid = user.socket_id;
 		console.log('user adked to speak = ', sid);
-		hostid = String(hostofroom[rid]);
-		let newSpeaker = users[sid];
+		// hostid = String(hostofroom[rid]);
+		let hostid = '';
+		try {
+			let res = await axios.get(url + '/user', { params: { roomId: rid, role: 'host' } });
+			console.log('host = ', res.data);
+			hostid = res.data.users[0].socket_id;
+		} catch (err) {
+			console.log('getting host err', err);
+		}
+
+		let newSpeaker = '';
+		try {
+			let res = await axios.get(url + '/user', { params: { roomId: rid, socket_id: socket_id } });
+			console.log('nuw speaker = ', res.data);
+			newSpeaker = res.data.users[0].socket_id;
+		} catch (err) {
+			console.log('getting newspeaker err', err);
+		}
 
 		socket.to(hostid).emit('allow_speak', newSpeaker);
 	});
@@ -86,52 +151,73 @@ io.on('connection', (socket) => {
 		socket.to(user.socket_id).emit('client_permission', user.value);
 	});
 
-	socket.on('role_changed', (object) => {
+	socket.on('role_changed', async (object) => {
 		let roomId = object.roomId;
-		let userId = object.socket_id;
-		for (let i of rooms[roomId]) {
-			if (i.socket_id == userId) {
-				i.role = 'speaker';
-			}
+		let socket_id = object.socket_id;
+		// for (let i of rooms[roomId]) {
+		// 	if (i.socket_id == userId) {
+		// 		i.role = 'speaker';
+		// 	}
+		// }
+		try {
+			let res = await axios.get(url + '/user/updateuser', {
+				params: { roomId: rid, socket_id: socket_id, role: 'speaker' }
+			});
+			console.log('nuw speaker = ', res.data);
+			newSpeaker = res.data.users[0].socket_id;
+		} catch (err) {
+			console.log('getting newspeaker err', err);
 		}
 
-		socket.to(roomId).emit('user_changed', userId);
+		socket.to(roomId).emit('user_changed', socket_id);
 	});
 
-    socket.on("remove_speaker",(obj)=>{
-        console.log("remove speaker callded = ",obj.socket_id);
-        let roomId = obj.roomId;
-        let userId = obj.socket_id;
-        let host = hostofroom[roomId];
-        console.log("host while rs = ",host);
-        for (let i of rooms[roomId]) {
-			if (i.socket_id === userId) {
-				i.role = 'audience';
-			}
+	socket.on('remove_speaker', async (obj) => {
+		console.log('remove speaker callded = ', obj.socket_id);
+		let roomId = obj.roomId;
+		let socket_id = obj.socket_id;
+		let host = hostofroom[roomId];
+		// console.log('host while rs = ', host);
+		// for (let i of rooms[roomId]) {
+		// 	if (i.socket_id === userId) {
+		// 		i.role = 'audience';
+		// 	}
+		// }
+		try {
+			let res = await axios.get(url + '/user/updateuser', {
+				params: { roomId: rid, socket_id: socket_id, role: 'audience' }
+			});
+			console.log('nuw speaker = ', res.data);
+			newSpeaker = res.data.users[0].socket_id;
+		} catch (err) {
+			console.log('getting newspeaker err', err);
 		}
-        io.to(roomId).emit("speaker_removed",userId);
-        
-        
 
-    })
+		io.to(roomId).emit('speaker_removed', socket_id);
+	});
 
-	socket.on('end_meeting', (id) => {
+	socket.on('end_meeting', async (id) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
 
 		console.log('meeting ended id = ', rooms[id]);
-        axios
+		axios
 			.post('http://35.154.237.208:8080/deleteliveroom', {
-				channelName: id,
-				
+				channelName: id
 			})
 			.then(function(response) {
-				console.log('response of deleting  room successful id =  ',id );
+				console.log('response of deleting  room successful id =  ', id);
 			})
 			.catch(function(error) {
 				console.log('deleting room err = ', error);
 			});
-
-		delete rooms[id];
+		try {
+			let res = await axios.get(url + '/user/remove', {
+				params: { roomId: id }
+			});
+			console.log('ending meerting succesfull', res);
+		} catch (err) {
+			console.log('ending meeting err', err);
+		}
 	});
 
 	socket.on('leave_assign', (object) => {
@@ -164,16 +250,15 @@ io.on('connection', (socket) => {
 		console.log('user disconnect = ', socket.id);
 
 		let roomId = userInfo[socket.id];
-        let host = hostofroom[roomId];
+		let host = hostofroom[roomId];
 		console.log('roomid of disconnected user=', roomId);
 		if (roomId && host !== socket.id && rooms[roomId]) {
 			rooms[roomId] = rooms[roomId].filter((r) => r.socket_id != socket.id);
 		}
 		delete userInfo[socket.id];
-		
 
 		socket.to(roomId).emit('user_leave', users[socket.id]);
-        delete users[socket.id];
+		delete users[socket.id];
 	});
 });
 
@@ -182,7 +267,7 @@ setInterval(() => {
 	console.log('userInfo= ', userInfo);
 	console.log('users = ', users);
 	console.log('.............................');
-}, 3*60 * 1000);
+}, 3 * 60 * 1000);
 // module.exports = server;
 
 server.listen(8000, () => {

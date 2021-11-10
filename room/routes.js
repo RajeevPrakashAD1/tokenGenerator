@@ -1,8 +1,8 @@
 const express = require('express');
 
 const router = express.Router();
-const tokenController = require('./tokencontroller');
-const roomController = require('./room/roomcontroller');
+const tokenController = require('../tokencontroller');
+const roomController = require('./roomcontroller');
 
 // token routes
 
@@ -17,6 +17,6 @@ router.route('/deleteliveroom').post(roomController.delteLiveRoom);
 router.route('/deletescheduledroom').post(roomController.delteScheduledRoom);
 
 router.route('/updatehost').post(roomController.updateHost);
-router.route("/").get(roomController.home)
+router.route('/').get(roomController.home);
 
 module.exports = router;

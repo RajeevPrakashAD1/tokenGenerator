@@ -3,7 +3,9 @@ const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
 const server = require('./socket/socketServer');
-const Routes = require('./routes');
+const RoomRoute = require('./room/routes');
+const RoomInfoRoute = require('./room_info/routes');
+const userRoute = require('./users/routes');
 const checkScheduledMeetings = require('./checkingscheduled.js');
 const PORT = process.env.PORT || 8080;
 const PORT2 = process.env.PORT || 8000;
@@ -37,7 +39,9 @@ mongoose
 	})
 	.catch((err) => console.log('database connection error', err));
 
-app.use(Routes);
+app.use(RoomRoute);
+app.use(userRoute);
+app.use(RoomInfoRoute);
 
 app.all('*', (req, res, next) => {
 	console.log('req', req.originalUrl);
