@@ -11,10 +11,10 @@ io.origins((_, callback) => {
 });
 
 // const io = require('socket.io')(8000);
-let rooms = {};
-let userInfo = {};
-let hostofroom = {};
-let users = {};
+// let rooms = {};
+// let userInfo = {};
+// let hostofroom = {};
+// let users = {};
 // const url = 'http://35.154.237.208:8080';
 const url = 'http://localhost:8080';
 
@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
 		console.log(object.roomId, ' created room');
 		object['socket_id'] = socket.id;
 		object['roomId'] = roomId;
-		rooms[object.roomId] = [ object ];
+		// rooms[object.roomId] = [ object ];
 
 		//adding user in userSchema
 
@@ -38,10 +38,10 @@ io.on('connection', (socket) => {
 			console.log('adding user err', err.message);
 		}
 
-		userInfo[socket.id] = object.roomId;
-		users[socket.id] = object;
+		// userInfo[socket.id] = object.roomId;
+		// users[socket.id] = object;
 
-		hostofroom[roomId] = socket.id;
+		// hostofroom[roomId] = socket.id;
 		socket.join(object.roomId);
 		io.to(socket.id).emit('join_room_success', object);
 		socket.to(object.roomId).emit('new_user', object);
@@ -147,13 +147,14 @@ io.on('connection', (socket) => {
 		socket.to(hostid).emit('allow_speak', newSpeaker);
 	});
 
-	socket.on('permission', (user) => {
+	socket.on('permission', async (user) => {
 		console.log('permission asked =', user);
 
 		socket.to(user.socket_id).emit('client_permission', user.value);
 	});
 
 	socket.on('role_changed', async (object) => {
+		console.log('role chaged asked = ', object);
 		let roomId = object.roomId;
 		let socket_id = object.socket_id;
 		// for (let i of rooms[roomId]) {
@@ -163,10 +164,11 @@ io.on('connection', (socket) => {
 		// }
 		try {
 			let res = await axios.post(url + '/user/updateuser', {
-				params: { roomId: roomId, socket_id: socket_id, role: 'speaker' }
+				roomId: roomId,
+				socket_id: socket_id,
+				role: 'speaker'
 			});
-			console.log('nuw speaker = ', res.data);
-			newSpeaker = res.data.users[0].socket_id;
+			console.log('new speaker = ', res.data);
 		} catch (err) {
 			console.log('getting newspeaker err', err);
 		}
@@ -187,10 +189,11 @@ io.on('connection', (socket) => {
 		// }
 		try {
 			let res = await axios.post(url + '/user/updateuser', {
-				params: { roomId: roomId, socket_id: socket_id, role: 'audience' }
+				roomId: roomId,
+				socket_id: socket_id,
+				role: 'audience'
 			});
 			console.log('nuw speaker = ', res.data);
-			newSpeaker = res.data.users[0].socket_id;
 		} catch (err) {
 			console.log('getting newspeaker err', err);
 		}
@@ -201,7 +204,7 @@ io.on('connection', (socket) => {
 	socket.on('end_meeting', async (id) => {
 		socket.to(id).emit('meeting_end', 'meeting had been ended');
 
-		console.log('meeting ended id = ', rooms[id]);
+		console.log('meeting ended id = ', id);
 		axios
 			.post('http://35.154.237.208:8080/deleteliveroom', {
 				channelName: id
@@ -216,7 +219,7 @@ io.on('connection', (socket) => {
 			let res = await axios.post(url + '/user/remove', {
 				roomId: id
 			});
-			console.log('ending meerting succesfull', res);
+			console.log('ending meerting succesfull', res.data);
 		} catch (err) {
 			console.log('ending meeting err', err);
 		}
@@ -245,7 +248,9 @@ io.on('connection', (socket) => {
 		}
 		try {
 			let res = await axios.post(url + '/user/updateuser', {
-				params: { roomId: roomId, socket_id: socket_id, role: 'host' }
+				roomId: roomId,
+				socket_id: socket_id,
+				role: 'host'
 			});
 			console.log('nuw host = ', res.data);
 		} catch (err) {
