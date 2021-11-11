@@ -15,7 +15,8 @@ let rooms = {};
 let userInfo = {};
 let hostofroom = {};
 let users = {};
-const url = 'http://35.154.237.208:8080';
+// const url = 'http://35.154.237.208:8080';
+const url = 'http://localhost:8080';
 
 io.on('connection', (socket) => {
 	console.log('a user connected', socket.id);
@@ -95,8 +96,9 @@ io.on('connection', (socket) => {
 		// 	hostofroom[roomId] = socket.id;
 		// 	rooms[object.roomId] = [ object ];
 		// }
-		userInfo[socket.id] = object.roomId;
-		users[socket.id] = object;
+		// userInfo[socket.id] = object.roomId;
+		// users[socket.id] = object;
+
 		socket.join(object.roomId);
 		io.to(socket.id).emit('join_room_success', object);
 		socket.to(object.roomId).emit('new_user', object);
@@ -211,8 +213,8 @@ io.on('connection', (socket) => {
 				console.log('deleting room err = ', error);
 			});
 		try {
-			let res = await axios.get(url + '/user/remove', {
-				params: { roomId: id }
+			let res = await axios.post(url + '/user/remove', {
+				roomId: id
 			});
 			console.log('ending meerting succesfull', res);
 		} catch (err) {
@@ -285,6 +287,7 @@ io.on('connection', (socket) => {
 		// }
 		// delete userInfo[socket.id];
 		let socket_id = socket.id;
+
 		let user = '';
 		let roomId = '';
 		try {
@@ -300,7 +303,7 @@ io.on('connection', (socket) => {
 
 		try {
 			let res = await axios.post(url + '/user/remove', {
-				params: { socket_id: socket_id }
+				socket_id: socket_id
 			});
 			console.log('deleting user succesfull', res.data);
 		} catch (err) {

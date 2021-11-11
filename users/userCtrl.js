@@ -14,7 +14,8 @@ exports.addUser = catchAsync(async (req, res) => {
 });
 
 exports.removeUser = catchAsync(async (req, res) => {
-	const removeUser = await User.deleteMany(req.query);
+	console.log('query to dlete', req.query, ' b = ', req.body);
+	const removeUser = await User.deleteMany({ ...req.query, ...req.body });
 	res.send({ removeUser: removeUser });
 });
 
