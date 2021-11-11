@@ -162,7 +162,7 @@ io.on('connection', (socket) => {
 		// 	}
 		// }
 		try {
-			let res = await axios.get(url + '/user/updateuser', {
+			let res = await axios.post(url + '/user/updateuser', {
 				params: { roomId: roomId, socket_id: socket_id, role: 'speaker' }
 			});
 			console.log('nuw speaker = ', res.data);
@@ -251,7 +251,7 @@ io.on('connection', (socket) => {
 		} catch (err) {
 			console.log('getting newspeaker err', err);
 		}
-		let user = '';
+		let user = { userName: 'xxx', userId: 'xxx' };
 		try {
 			let res = await axios.get(url + '/user', { params: { socket_id: socket_id } });
 			console.log('host = ', res.data);
@@ -265,8 +265,8 @@ io.on('connection', (socket) => {
 		axios
 			.post('http://35.154.237.208:8080/updateHost', {
 				channelName: roomId,
-				hostName: users[userId].userName,
-				userId: users[userId].userId
+				hostName: user.userName,
+				userId: user.userId
 			})
 			.then(function(response) {
 				console.log('response of changing host = ', response);
