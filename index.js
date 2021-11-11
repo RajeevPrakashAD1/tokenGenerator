@@ -33,11 +33,25 @@ mongoose
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	})
-	.then((con) => {
+	.then(async (con) => {
 		//console.log(con.connections);
 		console.log('DB connection successful');
 	})
 	.catch((err) => console.log('database connection error', err));
+
+// const mongoose = require('mongoose');
+// require('dotenv').config();
+
+// const connectToMongo = async() => {
+//     await mongoose.connect(connectString, {
+//         useNewUrlParser: true,
+//         useUnifiedTopology: true,
+//         useFindAndModify: false,
+//     });
+//     return mongoose;
+// };
+
+// await connectToMongo().then(async() => console.log('connected yeee'));
 
 app.use(RoomRoute);
 app.use(userRoute);

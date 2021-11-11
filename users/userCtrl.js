@@ -25,7 +25,7 @@ exports.getUser = catchAsync(async (req, res) => {
 });
 
 exports.updateUser = catchAsync(async (req, res) => {
-	console.log('new host name == ', req.body.hostName);
-	const status = await User.findOneAndUpdate({ socket_id: req.body.socket_id }, { role: req.query.role });
+	console.log('new update user == ', req.query);
+	const status = await User.findOneAndUpdate({ socket_id: req.query.socket_id }, { role: req.query.role });
 	res.send({ status: status });
 });
