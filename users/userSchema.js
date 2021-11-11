@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
 	userName: String,
-	channelName: String,
-	profilePic: String,
+
+	profile_pic: String,
 	role: String,
 	socket_id: String,
-	roomId: String
+	roomId: String,
+	userId: String
 });
 
 const User = mongoose.model('User', UserSchema);
