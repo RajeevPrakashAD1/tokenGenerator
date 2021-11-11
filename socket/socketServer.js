@@ -15,7 +15,7 @@ let rooms = {};
 let userInfo = {};
 let hostofroom = {};
 let users = {};
-const url = 'http://localhost:8080';
+const url = 'http://35.154.237.208:8080';
 
 io.on('connection', (socket) => {
 	console.log('a user connected', socket.id);
@@ -121,8 +121,8 @@ io.on('connection', (socket) => {
 
 	socket.on('ask_to_speak', async (user) => {
 		let rid = user.roomId;
-		let sid = user.socket_id;
-		console.log('user adked to speak = ', sid);
+		let socket_id = user.socket_id;
+		console.log('user adked to speak = ', socket_id);
 		// hostid = String(hostofroom[rid]);
 		let hostid = '';
 		try {
@@ -184,7 +184,7 @@ io.on('connection', (socket) => {
 		// 	}
 		// }
 		try {
-			let res = await axios.get(url + '/user/updateuser', {
+			let res = await axios.post(url + '/user/updateuser', {
 				params: { roomId: rid, socket_id: socket_id, role: 'audience' }
 			});
 			console.log('nuw speaker = ', res.data);
@@ -220,18 +220,46 @@ io.on('connection', (socket) => {
 		}
 	});
 
-	socket.on('leave_assign', (object) => {
+	socket.on('leave_assign', async (object) => {
 		console.log('leave and assign called = ', object);
-		hostofroom[object.roomId] = object.socket_id;
-		let roomId = object.roomId;
-		let userId = object.socket_id;
-		for (let i of rooms[roomId]) {
-			if (i.socket_id == userId) {
-				i.role = 'host';
-			}
+		// hostofroom[object.roomId] = object.socket_id;
+		// let roomId = object.roomId;
+		// let userId = object.socket_id;
+		// for (let i of rooms[roomId]) {
+		// 	if (i.socket_id == userId) {
+		// 		i.role = 'host';
+		// 	}
+		// }
+		let rid = object.roomId;
+		let hostid = '';
+		let socket_id = object.socket_id;
+
+		try {
+			let res = await axios.get(url + '/user', { params: { roomId: rid, role: 'host' } });
+			console.log('host = ', res.data);
+			hostid = res.data.users[0].socket_id;
+		} catch (err) {
+			console.log('getting host err', err);
 		}
-		users[userId].role = 'host';
-		socket.to(roomId).emit('host_changed', users[userId]);
+		try {
+			let res = await axios.post(url + '/user/updateuser', {
+				params: { roomId: rid, socket_id: socket_id, role: 'host' }
+			});
+			console.log('nuw host = ', res.data);
+		} catch (err) {
+			console.log('getting newspeaker err', err);
+		}
+		let user = '';
+		try {
+			let res = await axios.get(url + '/user', { params: { socket_id: socket_id } });
+			console.log('host = ', res.data);
+			user = res.data.users[0];
+		} catch (err) {
+			console.log('getting host err', err);
+		}
+
+		// users[userId].role = 'host';
+		socket.to(roomId).emit('host_changed', user);
 		axios
 			.post('http://35.154.237.208:8080/updateHost', {
 				channelName: roomId,
@@ -246,29 +274,40 @@ io.on('connection', (socket) => {
 			});
 	});
 
-	socket.on('disconnect', () => {
+	socket.on('disconnect', async () => {
 		console.log('user disconnect = ', socket.id);
 
-		let roomId = userInfo[socket.id];
-		let host = hostofroom[roomId];
-		console.log('roomid of disconnected user=', roomId);
-		if (roomId && host !== socket.id && rooms[roomId]) {
-			rooms[roomId] = rooms[roomId].filter((r) => r.socket_id != socket.id);
+		// let roomId = userInfo[socket.id];
+		// let host = hostofroom[roomId];
+		// console.log('roomid of disconnected user=', roomId);
+		// if (roomId && host !== socket.id && rooms[roomId]) {
+		// 	rooms[roomId] = rooms[roomId].filter((r) => r.socket_id != socket.id);
+		// }
+		// delete userInfo[socket.id];
+		let socket_id = socket.id;
+		let user = '';
+		let roomId = '';
+		try {
+			let res = await axios.get(url + '/user', { params: { socket_id: socket_id } });
+			console.log('user disconnected = ', res.data);
+			user = res.data.users[0];
+			if (user) roomId = res.data.users[0].roomId;
+		} catch (err) {
+			console.log('getting disconnet user err', err.message);
 		}
-		delete userInfo[socket.id];
 
-		socket.to(roomId).emit('user_leave', users[socket.id]);
-		delete users[socket.id];
+		if (roomId) socket.to(roomId).emit('user_leave', user);
+
+		try {
+			let res = await axios.post(url + '/user/remove', {
+				params: { socket_id: socket_id }
+			});
+			console.log('deleting user succesfull', res.data);
+		} catch (err) {
+			console.log('deleting user err', err.message);
+		}
 	});
 });
-
-setInterval(() => {
-	console.log('rooms= ', rooms);
-	console.log('userInfo= ', userInfo);
-	console.log('users = ', users);
-	console.log('.............................');
-}, 3 * 60 * 1000);
-// module.exports = server;
 
 server.listen(8000, () => {
 	console.log('listening on = *:8000');
