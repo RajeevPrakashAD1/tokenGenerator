@@ -122,13 +122,13 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('ask_to_speak', async (user) => {
-		let rid = user.roomId;
+		let roomId = user.roomId;
 		let socket_id = user.socket_id;
 		console.log('user adked to speak = ', socket_id);
 		// hostid = String(hostofroom[rid]);
 		let hostid = '';
 		try {
-			let res = await axios.get(url + '/user', { params: { roomId: rid, role: 'host' } });
+			let res = await axios.get(url + '/user', { params: { roomId: roomId, role: 'host' } });
 			console.log('host = ', res.data);
 			hostid = res.data.users[0].socket_id;
 		} catch (err) {
@@ -137,7 +137,7 @@ io.on('connection', (socket) => {
 
 		let newSpeaker = '';
 		try {
-			let res = await axios.get(url + '/user', { params: { roomId: rid, socket_id: socket_id } });
+			let res = await axios.get(url + '/user', { params: { roomId: roomId, socket_id: socket_id } });
 			console.log('nuw speaker = ', res.data);
 			newSpeaker = res.data.users[0];
 		} catch (err) {
@@ -163,7 +163,7 @@ io.on('connection', (socket) => {
 		// }
 		try {
 			let res = await axios.get(url + '/user/updateuser', {
-				params: { roomId: rid, socket_id: socket_id, role: 'speaker' }
+				params: { roomId: roomId, socket_id: socket_id, role: 'speaker' }
 			});
 			console.log('nuw speaker = ', res.data);
 			newSpeaker = res.data.users[0].socket_id;
@@ -187,7 +187,7 @@ io.on('connection', (socket) => {
 		// }
 		try {
 			let res = await axios.post(url + '/user/updateuser', {
-				params: { roomId: rid, socket_id: socket_id, role: 'audience' }
+				params: { roomId: roomId, socket_id: socket_id, role: 'audience' }
 			});
 			console.log('nuw speaker = ', res.data);
 			newSpeaker = res.data.users[0].socket_id;
@@ -232,12 +232,12 @@ io.on('connection', (socket) => {
 		// 		i.role = 'host';
 		// 	}
 		// }
-		let rid = object.roomId;
+		let roomId = object.roomId;
 		let hostid = '';
 		let socket_id = object.socket_id;
 
 		try {
-			let res = await axios.get(url + '/user', { params: { roomId: rid, role: 'host' } });
+			let res = await axios.get(url + '/user', { params: { roomId: roomId, role: 'host' } });
 			console.log('host = ', res.data);
 			hostid = res.data.users[0].socket_id;
 		} catch (err) {
@@ -245,7 +245,7 @@ io.on('connection', (socket) => {
 		}
 		try {
 			let res = await axios.post(url + '/user/updateuser', {
-				params: { roomId: rid, socket_id: socket_id, role: 'host' }
+				params: { roomId: roomId, socket_id: socket_id, role: 'host' }
 			});
 			console.log('nuw host = ', res.data);
 		} catch (err) {
