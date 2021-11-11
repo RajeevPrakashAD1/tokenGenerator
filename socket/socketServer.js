@@ -139,7 +139,7 @@ io.on('connection', (socket) => {
 		try {
 			let res = await axios.get(url + '/user', { params: { roomId: rid, socket_id: socket_id } });
 			console.log('nuw speaker = ', res.data);
-			newSpeaker = res.data.users[0].socket_id;
+			newSpeaker = res.data.users[0];
 		} catch (err) {
 			console.log('getting newspeaker err', err);
 		}
