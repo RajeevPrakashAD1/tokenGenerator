@@ -15,8 +15,8 @@ io.origins((_, callback) => {
 // let userInfo = {};
 // let hostofroom = {};
 // let users = {};
-// const url = 'http://35.154.237.208:8080';
-const url = 'http://localhost:8080';
+const url = 'http://35.154.237.208:8080';
+// const url = 'http://localhost:8080';
 
 io.on('connection', (socket) => {
 	console.log('a user connected', socket.id);
