@@ -10,13 +10,7 @@ io.origins((_, callback) => {
 	callback(null, true);
 });
 
-// const io = require('socket.io')(8000);
-// let rooms = {};
-// let userInfo = {};
-// let hostofroom = {};
-// let users = {};
 const url = 'http://35.154.237.208:8080';
-// const url = 'http://localhost:8080';
 
 io.on('connection', (socket) => {
 	console.log('a user connected', socket.id);
@@ -26,9 +20,6 @@ io.on('connection', (socket) => {
 		console.log(object.roomId, ' created room');
 		object['socket_id'] = socket.id;
 		object['roomId'] = roomId;
-		// rooms[object.roomId] = [ object ];
-
-		//adding user in userSchema
 
 		try {
 			res = await axios.post(url + '/user/add', object);
@@ -38,10 +29,6 @@ io.on('connection', (socket) => {
 			console.log('adding user err', err.message);
 		}
 
-		// userInfo[socket.id] = object.roomId;
-		// users[socket.id] = object;
-
-		// hostofroom[roomId] = socket.id;
 		socket.join(object.roomId);
 		io.to(socket.id).emit('join_room_success', object);
 		socket.to(object.roomId).emit('new_user', object);
@@ -53,22 +40,7 @@ io.on('connection', (socket) => {
 		let already_in = [];
 		object['socket_id'] = socket.id;
 		object['roomId'] = roomId;
-		// if (rooms[roomId]) {
-		// 	if (rooms[roomId].length != 0) {
-		// 		already_in = rooms[roomId];
-		// 	}
-		// }
 
-		//const res = await axios.get('https://httpbin.org/get', { params: { answer: 42 } });
-		// axios
-		// 	.get(url + '/user', { params: { roomId: roomId } })
-		// 	.then((response) => {
-		// 		already_in = response.data['users'];
-		// 		console.log('rs of get user already_in', already_in);
-		// 	})
-		// 	.catch((err) => {
-		// 		console.log('getting user err', err.message);
-		// 	});
 		try {
 			res = await axios.get(url + '/user', { params: { roomId: roomId } });
 			already_in = res.data.users;
@@ -87,17 +59,6 @@ io.on('connection', (socket) => {
 
 		io.to(socket.id).emit('already_in_room', already_in);
 		console.log(object.roomId, ' joined room');
-
-		// if (rooms[object.roomId]) {
-		// 	rooms[object.roomId].push(object);
-		// } else {
-		// 	console.log(object.roomId, ' created room');
-		// 	object['socket_id'] = socket.id;
-		// 	hostofroom[roomId] = socket.id;
-		// 	rooms[object.roomId] = [ object ];
-		// }
-		// userInfo[socket.id] = object.roomId;
-		// users[socket.id] = object;
 
 		socket.join(object.roomId);
 		io.to(socket.id).emit('join_room_success', object);
@@ -125,7 +86,7 @@ io.on('connection', (socket) => {
 		let roomId = user.roomId;
 		let socket_id = user.socket_id;
 		console.log('user adked to speak = ', socket_id);
-		// hostid = String(hostofroom[rid]);
+
 		let hostid = '';
 		try {
 			let res = await axios.get(url + '/user', { params: { roomId: roomId, role: 'host' } });
@@ -157,11 +118,7 @@ io.on('connection', (socket) => {
 		console.log('role chaged asked = ', object);
 		let roomId = object.roomId;
 		let socket_id = object.socket_id;
-		// for (let i of rooms[roomId]) {
-		// 	if (i.socket_id == userId) {
-		// 		i.role = 'speaker';
-		// 	}
-		// }
+
 		try {
 			let res = await axios.post(url + '/user/updateuser', {
 				roomId: roomId,
@@ -180,13 +137,7 @@ io.on('connection', (socket) => {
 		console.log('remove speaker callded = ', obj.socket_id);
 		let roomId = obj.roomId;
 		let socket_id = obj.socket_id;
-		let host = hostofroom[roomId];
-		// console.log('host while rs = ', host);
-		// for (let i of rooms[roomId]) {
-		// 	if (i.socket_id === userId) {
-		// 		i.role = 'audience';
-		// 	}
-		// }
+
 		try {
 			let res = await axios.post(url + '/user/updateuser', {
 				roomId: roomId,
@@ -227,14 +178,7 @@ io.on('connection', (socket) => {
 
 	socket.on('leave_assign', async (object) => {
 		console.log('leave and assign called = ', object);
-		// hostofroom[object.roomId] = object.socket_id;
-		// let roomId = object.roomId;
-		// let userId = object.socket_id;
-		// for (let i of rooms[roomId]) {
-		// 	if (i.socket_id == userId) {
-		// 		i.role = 'host';
-		// 	}
-		// }
+
 		let roomId = object.roomId;
 		let hostid = '';
 		let socket_id = object.socket_id;
@@ -284,13 +228,6 @@ io.on('connection', (socket) => {
 	socket.on('disconnect', async () => {
 		console.log('user disconnect = ', socket.id);
 
-		// let roomId = userInfo[socket.id];
-		// let host = hostofroom[roomId];
-		// console.log('roomid of disconnected user=', roomId);
-		// if (roomId && host !== socket.id && rooms[roomId]) {
-		// 	rooms[roomId] = rooms[roomId].filter((r) => r.socket_id != socket.id);
-		// }
-		// delete userInfo[socket.id];
 		let socket_id = socket.id;
 
 		let user = '';
